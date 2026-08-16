@@ -1,0 +1,26 @@
+# Atlas AI — systemd unit example (see docs/RUNBOOK.md §2)
+[Unit]
+Description=Atlas AI tool directory
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/srv/atlas-ai
+Environment=PORT=3000
+Environment=HOST=0.0.0.0
+Environment=DATA_DIR=/srv/atlas-ai/data
+Environment=BASE_URL=https://tools.example.com
+Environment=STORAGE=auto
+ExecStart=/usr/bin/node server.js
+Restart=always
+RestartSec=3
+User=www-data
+Group=www-data
+# Hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ReadWritePaths=/srv/atlas-ai/data /srv/atlas-ai/backups
+
+[Install]
+WantedBy=multi-user.target

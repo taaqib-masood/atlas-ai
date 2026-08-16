@@ -1,0 +1,12 @@
+# Runtime data (SQLite DB or JSON store) — never commit
+data/
+
+# OS / editor noise
+.DS_Store
+*.log
+node_modules/
+backups/
+dist/
+
+# Scratch review DBs
+data-review-tmp/

@@ -1,0 +1,201 @@
+{
+  "lang": "en",
+  "dir": "ltr",
+  "site": {
+    "name": "Atlas AI",
+    "tagline": "The honest AI tool directory",
+    "description": "Discover, compare, and choose the right AI tools. Editorial reviews, transparent pricing, and community-driven rankings."
+  },
+  "nav": {
+    "browse": "Browse",
+    "compare": "Compare",
+    "dashboard": "Dashboard",
+    "deals": "Deals",
+    "pricing": "Pricing",
+    "trust": "Trust",
+    "methodology": "Methodology",
+    "student": "Students",
+    "ranking": "Ranking",
+    "login": "Log in",
+    "logout": "Log out",
+    "register": "Sign up"
+  },
+  "home": {
+    "hero_title": "Find the right AI tool — without the hype",
+    "hero_sub": "Editorial reviews, transparent pricing, and community-driven rankings. No paid placements, ever.",
+    "search_placeholder": "Search 90+ AI tools by name, category, or task...",
+    "browse_all": "Browse all tools",
+    "featured_tools": "Featured tools",
+    "recent_tools": "Recently added",
+    "popular_categories": "Popular categories",
+    "stats_tools": "Tools listed",
+    "stats_categories": "Categories",
+    "stats_reviews": "Reviews",
+    "stats_tests": "Hands-on tests"
+  },
+  "browse": {
+    "title": "Browse AI Tools",
+    "sub": "Explore our curated directory of AI tools",
+    "filter_category": "Category",
+    "filter_pricing": "Pricing",
+    "filter_tag": "Tag",
+    "sort": "Sort",
+    "sort_relevance": "Relevance",
+    "sort_name": "A–Z",
+    "sort_newest": "Newest",
+    "sort_rating": "Highest rated",
+    "empty": "No tools match your filters. Try adjusting or clearing filters.",
+    "results_count": "{count} tool(s) found",
+    "compare_add": "Add to compare",
+    "compare_remove": "Remove from compare",
+    "compare_tray": "Compare ({count})",
+    "compare_go": "Compare selected"
+  },
+  "tool": {
+    "visit": "Visit website",
+    "ref_link": "via Atlas AI",
+    "save": "Save to favorites",
+    "unsave": "Remove from favorites",
+    "review": "Write a review",
+    "reviews": "Reviews",
+    "avg_rating": "Average rating",
+    "no_reviews": "No reviews yet. Be the first!",
+    "tested_by_us": "Tested by us",
+    "verified": "Verified",
+    "deal_active": "Deal available",
+    "pricing_calculator": "Pricing calculator",
+    "free_tier": "Free tier",
+    "enterprise_ready": "Enterprise ready",
+    "related_tools": "Related tools",
+    "why_recommended": "Why we recommend these"
+  },
+  "reviews": {
+    "title": "Write a review",
+    "rating_label": "Your rating",
+    "body_label": "Your review",
+    "body_placeholder": "What did you like or dislike? Be specific and honest.",
+    "submit": "Submit review",
+    "success": "Review submitted! Thank you.",
+    "pending_verification": "Your review is pending verification.",
+    "verified_badge": "Verified reviewer"
+  },
+  "dashboard": {
+    "title": "Your Dashboard",
+    "welcome": "Welcome back",
+    "favorites": "Your favorites",
+    "no_favorites": "No favorites yet. Browse tools and save the ones you like.",
+    "stacks": "Your stacks",
+    "no_stacks": "No stacks yet. Create a stack to organize your favorite tools.",
+    "create_stack": "Create stack",
+    "alerts": "Your alerts",
+    "no_alerts": "No active alerts.",
+    "api_keys": "API keys",
+    "recent_activity": "Recent activity"
+  },
+  "compare": {
+    "title": "Compare Tools",
+    "sub": "Side-by-side comparison of up to 5 tools",
+    "empty": "Add tools to compare from the browse page.",
+    "export_pdf": "Export as PDF",
+    "attribute": "Attribute"
+  },
+  "maker": {
+    "claim_title": "Claim your tool",
+    "claim_sub": "Get access to analytics, manage your listing, and track referrals.",
+    "dashboard_title": "Maker dashboard",
+    "analytics_title": "Referral analytics",
+    "benchmarks_title": "Category benchmarks",
+    "no_claims": "You haven't claimed any tools yet.",
+    "referral_link": "Your referral link",
+    "copy_link": "Copy link"
+  },
+  "admin": {
+    "title": "Admin",
+    "tools": "Tools",
+    "add_tool": "Add tool",
+    "import_csv": "Import CSV",
+    "test_results": "Test results",
+    "newsletter": "Newsletter",
+    "compliance": "Compliance",
+    "history": "Change history"
+  },
+  "newsletter": {
+    "title": "Newsletter",
+    "sub": "Get the best new AI tools in your inbox every week.",
+    "email_placeholder": "you@example.com",
+    "subscribe": "Subscribe",
+    "success": "Subscribed! Check your inbox.",
+    "categories_label": "Interests",
+    "frequency": "Weekly digest — no spam, unsubscribe anytime."
+  },
+  "trust": {
+    "title": "Trust & Transparency",
+    "never_list_title": "What we never do",
+    "revenue_title": "How we make money",
+    "ranking_title": "How rankings work",
+    "published": "Published",
+    "last_updated": "Last updated"
+  },
+  "deal": {
+    "title": "Deals & Discounts",
+    "sub": "Exclusive offers for the community",
+    "copy_code": "Copy code",
+    "expires": "Expires",
+    "no_deals": "No active deals right now.",
+    "affiliate_disclosure": "Atlas AI may earn a commission from qualifying purchases. This never affects rankings."
+  },
+  "pricing_page": {
+    "title": "Maker Pricing",
+    "sub": "Claim your tools, track performance, and grow your reach.",
+    "free": "Free",
+    "pro": "Pro",
+    "enterprise": "Enterprise",
+    "most_popular": "Most popular",
+    "get_started": "Get started",
+    "coming_soon": "Coming soon",
+    "trust_notice": "Pricing only affects tool promotion and feature access. Rankings are never for sale."
+  },
+  "student": {
+    "title": "Student Hub",
+    "sub": "AI tools, academic integrity, and privacy guidance for students.",
+    "integrity_title": "Academic Integrity",
+    "free_tools_title": "Free & freemium tools for students"
+  },
+  "ranking": {
+    "title": "Merit-Based Rankings",
+    "sub": "Transparent ranking formula — no paid placements.",
+    "formula_title": "How we rank"
+  },
+  "methodology": {
+    "title": "Our Methodology",
+    "sub": "How we test, review, and rate AI tools."
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong. Please try again.",
+    "not_found": "Not found",
+    "back": "Back",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "close": "Close",
+    "search": "Search",
+    "filter": "Filter",
+    "clear": "Clear",
+    "more": "More",
+    "less": "Less",
+    "all": "All",
+    "none": "None",
+    "by": "by",
+    "and": "and",
+    "or": "or",
+    "powered_by": "Powered by Atlas AI"
+  },
+  "errors": {
+    "csrf": "Invalid form submission. Please refresh and try again.",
+    "auth_required": "Please log in to continue.",
+    "rate_limit": "Too many requests. Please wait a moment.",
+    "validation": "Please fix the errors below."
+  }
+}

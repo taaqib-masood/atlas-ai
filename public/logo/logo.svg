@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 64" role="img" aria-label="Atlas AI">
+  <circle cx="32" cy="32" r="25" fill="#000000"/>
+  <rect x="7" y="30" width="50" height="4" fill="#FAFAF7"/>
+  <rect x="42" y="19" width="6" height="6" fill="#C05621"/>
+  <text x="78" y="45" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="30" font-weight="800" letter-spacing="2.4" fill="#000000">ATLAS AI</text>
+</svg>
