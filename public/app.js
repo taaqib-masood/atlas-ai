@@ -461,6 +461,27 @@
   }
 
   /* ==================== Typeahead (enhanced) ==================== */
+  function initStackSave() {
+    document.querySelectorAll('.stack-save-btn').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (!btn.dataset.toolSlug) return;
+        const form = document.createElement('form');
+        form.method = 'post';
+        form.action = '/api/stacks/save';
+        form.innerHTML = '<input name="tool_slug" value="' + btn.dataset.toolSlug + '"><input name="_csrf" value="' + (window.__CSRF || '') + '">';
+        postForm(form, function (json) {
+          if (json && json.error) { ToastManager.show(json.error, 'error'); return; }
+          if (json && json.saved) {
+            btn.classList.add('is-stacked');
+            btn.setAttribute('aria-label', 'Saved to ' + (json.stack_name || 'your stack'));
+            ToastManager.show('✓ Saved to ' + (json.stack_name || 'your stack'), 'success', 2200);
+          }
+        });
+      });
+    });
+  }
+
   function initTypeahead() {
     const input = document.querySelector('input[data-typeahead]');
     const box = document.querySelector('[data-typeahead-results]');
@@ -981,6 +1002,7 @@
     CompareTray.init();
     exposeCSRF();
     initFavorites();
+    initStackSave();
     initTypeahead();
     initAdminConfirms();
     initPageTransitions();

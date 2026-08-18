@@ -4,7 +4,7 @@
  * walks the full user/admin journey with real HTTP requests, and prints a
  * PASS/FAIL report per Goal Brief acceptance criterion.
  *
- * Checks: 75 total — A0–L2 baseline (53) + M1–M10 trust-metadata (10) + S1–S12 stacks (12).
+ * Checks: 77 total — A0–L2 baseline (53) + M1–M10 trust-metadata (10) + S1–S14 stacks (14).
  *
  * Usage: node scripts/verify.js
  */
@@ -603,6 +603,17 @@ async function main() {
   } else {
     check('S12. JsonStore parity: stack+item persist, total survives reload', false, 'json server did not start');
   }
+
+  const myStackPage = await req('GET', '/my-stack', { jar: sj });
+  check('S13. /my-stack route renders', myStackPage.status === 200 && myStackPage.text.includes('Your AI Stack') && myStackPage.text.includes('My AI Stack'),
+    `status=${myStackPage.status} shows-stack=${myStackPage.text.includes('My AI Stack')}`);
+
+  const anyTool = tryGet(db, "SELECT slug FROM tools WHERE status = 'published' ORDER BY id LIMIT 1");
+  const saveRes = await req('POST', '/api/stacks/save', { jar: sj, form: { _csrf: scsrf, tool_slug: anyTool.slug }, accept: 'application/json' });
+  let saveJson = null;
+  try { saveJson = JSON.parse(saveRes.text); } catch {}
+  check('S14. Save-to-stack API adds catalog tool', saveRes.status === 200 && saveJson && saveJson.saved === true && !!saveJson.stack_id,
+    `saved=${saveJson && saveJson.saved} stack=${saveJson && saveJson.stack_name} total=${saveJson && saveJson.total_cents}¢`);
   }
 
   /* ---- summary ---- */
