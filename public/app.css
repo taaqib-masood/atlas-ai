@@ -794,3 +794,36 @@ input[type="range"]:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 4px var(
   .tool-grid .tool-card.enter { animation: none; opacity: 1; transform: none; }
   .tool-card::after, .compare-tray.shake, .cost-output.pop, .live-chip.pulsing { animation: none !important; }
 }
+
+/* ---------- Trust metadata badges (Core MVP) ----------
+   Monochrome + typographic only: solid inverted = verified,
+   dashed mid-gray = unverified (open question), muted = N/A.
+   No --info / --ok / --warn / --danger tokens, no gradients. */
+.tool-card-trust { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+.trust-badge {
+  font-family: var(--mono); font-size: 0.6rem; font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase; line-height: 1.4;
+  padding: 2px 7px; border-radius: var(--r-sm);
+  border: 1px solid var(--line-2); color: var(--ink-2); background: var(--surface);
+  white-space: nowrap;
+}
+.trust-badge.trust-verified { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+.trust-badge.trust-unverified { border-style: dashed; color: var(--ink-2); }
+.trust-badge.trust-na { border-color: transparent; color: var(--ink-3); background: var(--bg-2); opacity: 0.6; }
+
+/* Two-line legend + segment filter (browse) */
+.trust-legend {
+  margin: 14px 0 2px; padding: 10px 14px;
+  border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--surface);
+}
+.trust-legend p { font-family: var(--mono); font-size: 0.68rem; line-height: 1.7; color: var(--ink-3); margin: 0; letter-spacing: 0.02em; }
+.trust-filter { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 6px; }
+
+/* Detail-page trust section */
+.trust-detail {
+  display: grid; grid-template-columns: minmax(140px, 200px) 1fr;
+  gap: 8px 16px; max-width: 680px; font-size: 0.9rem;
+}
+.trust-detail-row { display: contents; }
+.trust-detail dt { color: var(--ink-3); font-weight: 600; padding-top: 1px; }
+.trust-detail dd { margin: 0; color: var(--ink); word-break: break-word; }

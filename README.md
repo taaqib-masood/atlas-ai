@@ -59,7 +59,7 @@ lib/
   html.js            SSR layout + components
 public/              app.css (design system), app.js (enhancements), favicon
 scripts/
-  verify.js          53-check end-to-end verification suite (node scripts/verify.js)
+  verify.js          63-check end-to-end verification suite (node scripts/verify.js)
   backup.sh / restore.sh / rollback.sh / package-fc.sh
 docs/                RUNBOOK.md (deploy/backup/monitoring/rollback), FEATURE-ENHANCEMENTS.md
 data/                Runtime database (created on first boot, git-ignored)
@@ -93,7 +93,7 @@ The Atlas AI logo lives in `public/logo/` and `public/favicon.*` (served at `/as
 ## Verification
 
 ```bash
-node scripts/verify.js   # boots the app on a scratch port + data dir and runs 53 checks
+node scripts/verify.js   # boots the app on a scratch port + data dir and runs 63 checks
 ```
 
 Coverage: boot & health, home/browse/category/detail rendering, every filter + sort, search API, register/login/logout, favorite save/remove, **favorites persist across sessions**, dashboard (favorites, activity, stats, recommendations), CSRF rejection, login rate limiting, full admin lifecycle (create → publish → public → unpublish → delete) with change-history assertions, recommendation explainability, sitemap/robots, security headers, performance budget (home < 60 KB, < 250 ms local), DB entity counts, and the JSON-store fallback path.

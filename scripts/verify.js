@@ -4,6 +4,8 @@
  * walks the full user/admin journey with real HTTP requests, and prints a
  * PASS/FAIL report per Goal Brief acceptance criterion.
  *
+ * Checks: 63 total — A0–L2 baseline (53) + M1–M10 trust-metadata (10).
+ *
  * Usage: node scripts/verify.js
  */
 const { spawn } = require('child_process');
@@ -17,6 +19,29 @@ const PORT = 3300 + Math.floor(Math.random() * 400);
 const BASE = `http://127.0.0.1:${PORT}`;
 const DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), 'atlas-verify-'));
 const ADMIN = { email: 'admin@example.com', password: 'Admin!2026' };
+const TRUST_MAP_PATH = path.join(ROOT, 'lib', 'trust-map.json');
+
+/**
+ * Loads the vendored trust map (lib/trust-map.json). The M-series consumes it
+ * for enum/parity assertions; a missing/unreadable file makes those checks
+ * fail loudly (the feature is absent) instead of crashing the suite.
+ */
+function loadTrustMap() {
+  try {
+    return { ok: true, entries: JSON.parse(fs.readFileSync(TRUST_MAP_PATH, 'utf8')), error: '' };
+  } catch (e) {
+    return { ok: false, entries: [], error: e.message };
+  }
+}
+
+/* M-series DB helpers: trust columns may not exist yet on mid-flight code,
+ * so M-checks never crash the suite — they fail with the SQL error as evidence. */
+function tryGet(db, sql, ...args) {
+  try { return db.prepare(sql).get(...args); } catch (e) { return { _error: e.message }; }
+}
+function tryAll(db, sql, ...args) {
+  try { return db.prepare(sql).all(...args); } catch (e) { return null; }
+}
 
 const results = [];
 function check(name, ok, evidence = '') {
@@ -96,6 +121,7 @@ async function main() {
   if (!up) { console.error('Server failed to start:\n' + serverErr); process.exit(1); }
   const health = await (await fetch(BASE + '/healthz')).json();
   check('A0. Server boots & healthz ok', health.ok === true && health.published > 40, `published=${health.published} storage=${health.storage}`);
+  const trustMap = loadTrustMap();
 
   /* ---- browse & filter ---- */
   let r = await req('GET', '/');
@@ -105,6 +131,17 @@ async function main() {
 
   r = await req('GET', '/browse');
   check('C1. Browse lists tools', r.status === 200 && r.text.includes('tool-card'), `${r.text.length} bytes`);
+
+  /* ---- M4: trust badges on published cards ---- */
+  {
+    const cards = (r.text.match(/class="tool-card"/g) || []).length;
+    const badges = (r.text.match(/trust-badge/g) || []).length;
+    const css = (await req('GET', '/assets/app.css')).text;
+    const cls = ['.trust-badge', '.trust-verified', '.trust-unverified', '.trust-na'].map((c) => css.includes(c));
+    check('M4. Trust badges on every published card (3 per card) + badge CSS',
+      cards > 0 && badges >= 3 * cards && r.text.includes('\u2713 Commercial') && r.text.includes('\u2014 Privacy') && cls.every(Boolean),
+      `cards=${cards} badges=${badges} verified-label=${r.text.includes('\u2713 Commercial')} unverified-label=${r.text.includes('\u2014 Privacy')} css=${cls.map(Boolean).join('/')}`);
+  }
   r = await req('GET', '/browse?category=Writing');
   check('C2. Category filter works', r.status === 200 && r.text.includes('Grammarly') && !r.text.includes('/tool/chatgpt'));
   r = await req('GET', '/browse?pricing=Free');
@@ -118,10 +155,48 @@ async function main() {
   r = await req('GET', '/category/writing');
   check('C7. Category page works', r.status === 200 && r.text.includes('Trending in this category') && r.text.includes('Grammarly'));
 
+  /* ---- M5: trust legend + filter segments + localStorage persistence ---- */
+  {
+    const b = (await req('GET', '/browse')).text;
+    const js = fs.readFileSync(path.join(ROOT, 'public', 'app.js'), 'utf8');
+    // 5 segment buttons are SSR-rendered in the .trust-filter group; app.js wires
+    // them and persists the selection under the contract key.
+    const legendOk = b.includes('trust-legend');
+    const hookOk = b.includes('aria-label="Trust filter"') || b.includes('trust-filter');
+    const fi = b.indexOf('Trust filter');
+    const fwin = fi >= 0 ? b.slice(fi, fi + 2000) : '';
+    const segs = ['All', 'Commercial', 'Privacy', 'API', 'Unverified'].filter((s) => fwin.includes(s));
+    const keyOk = /TRUST_FILTER_KEY\s*=\s*'atlas-trust-filter'/.test(js);
+    const attrsOk = ['data-commercial', 'data-privacy', 'data-api'].every((a) => b.includes(a));
+    check('M5. Trust legend + 5 filter segments + atlas-trust-filter persistence',
+      legendOk && hookOk && segs.length === 5 && keyOk && attrsOk,
+      `legend=${legendOk} hook=${hookOk} segments=${segs.join(',') || 'none'} key=${keyOk} attrs=${attrsOk}`);
+  }
+
   /* ---- tool detail ---- */
   r = await req('GET', '/tool/chatgpt');
   check('D1. Tool detail renders with meta + JSON-LD',
     r.status === 200 && r.text.includes('ChatGPT') && r.text.includes('SoftwareApplication') && /<meta name="description"/.test(r.text) && r.text.includes('rel="canonical"'));
+
+  /* ---- M6: detail-page trust section ---- */
+  {
+    const chat = trustMap.entries.find((e) => e.slug === 'chatgpt');
+    if (!trustMap.ok || !chat) {
+      check('M6. Detail page trust section (3 statuses + source + last_verified + notes)', false, 'lib/trust-map.json missing or chatgpt absent');
+    } else {
+      const m = r.text.match(/Trust &(amp;)? (compliance|verification)/i);
+      const win = m ? r.text.slice(m.index, m.index + 4000) : '';
+      const src = chat.verification_source.slice(0, 30);
+      const note = chat.notes.slice(0, 30);
+      const fields = ['Commercial', 'Privacy', 'API'].filter((s) => !win.includes(s));
+      const ok = !!m && fields.length === 0
+        && (win.includes('Verified') || win.includes('\u2713 Commercial'))
+        && (win.includes('Unverified') || win.includes('\u2014 Privacy'))
+        && win.includes(chat.last_verified) && win.includes(src) && win.includes(note);
+      check('M6. Detail page trust section (3 statuses + source + last_verified + notes)', ok,
+        `heading=${!!m} fields=${fields.join('|') || '3/3'} verified=${win.includes('Verified') || win.includes('\u2713 Commercial')} lv=${win.includes(chat.last_verified)} src=${win.includes(src)} notes=${win.includes(note)}`);
+    }
+  }
   check('D2. Related tools with reasons', r.text.includes('Related tools') && r.text.includes('Same category'));
   check('D3. Outbound link + save control', r.text.includes('Visit website') && r.text.includes('data-fav-btn'));
   r = await req('GET', '/tool/does-not-exist');
@@ -183,6 +258,11 @@ async function main() {
     },
   });
   check('G4. Admin creates tool (draft)', r.status === 303);
+  const m8row = tryGet(db, "SELECT commercial_use_status, data_privacy_status, api_availability_status, verification_source, notes, last_verified_at FROM tools WHERE slug = 'testpress-ai'");
+  check('M8. Admin-created tool gets trust defaults (Unverified / empty source / fresh last_verified_at)',
+    !!m8row && !m8row._error && m8row.commercial_use_status === 'Unverified' && m8row.data_privacy_status === 'Unverified'
+    && m8row.api_availability_status === 'Unverified' && m8row.verification_source === '' && m8row.notes === '' && !!m8row.last_verified_at,
+    m8row && m8row._error ? m8row._error : JSON.stringify(m8row || null));
   r = await req('GET', '/admin/tools', { jar: aj });
   check('G5. Draft appears in admin list', r.status === 200 && r.text.includes('TestPress AI') && r.text.includes('pill-draft'));
   r = await req('GET', '/browse?q=TestPress');
@@ -202,6 +282,12 @@ async function main() {
   check('G12. Unpublished tool disappears from public', !r.text.includes('TestPress AI'));
   r = await req('POST', `/admin/tools/${id}/action`, { jar: aj, form: { _csrf: acsrf, action: 'verify' } });
   check('G13. Verify action ok', r.status === 303);
+  const m9row = tryGet(db, "SELECT verification_source, last_verified_at FROM tools WHERE slug = 'testpress-ai'");
+  const todayUtc = new Date().toISOString().slice(0, 10);
+  const lvDate = m9row && !m9row._error && m9row.last_verified_at ? new Date(m9row.last_verified_at).toISOString().slice(0, 10) : '';
+  check('M9. Admin Verify sets verification_source=admin + refreshes last_verified_at',
+    !!m9row && !m9row._error && m9row.verification_source === 'admin' && lvDate === todayUtc,
+    m9row && m9row._error ? m9row._error : `source=${m9row ? m9row.verification_source : '?'} lv=${lvDate} today=${todayUtc}`);
   r = await req('GET', '/admin/history', { jar: aj });
   const histOk = r.status === 200 && r.text.includes('TestPress AI') && r.text.includes('create') && r.text.includes('publish') && r.text.includes('unpublish') && r.text.includes('admin@example.com');
   check('G14. Change history records actor + timestamps', histOk);
@@ -265,6 +351,54 @@ async function main() {
   const recent = db.prepare('SELECT action, field, old_value, new_value, actor_id FROM tool_history ORDER BY id DESC LIMIT 1').get();
   check('K2. History row has actor + old/new values', !!recent && recent.actor_id !== null && 'old_value' in recent, JSON.stringify(recent));
 
+  /* ---- M-series: trust-metadata schema & data (direct scratch-DB reads) ---- */
+  {
+    const cols = db.prepare('PRAGMA table_info(tools)').all();
+    const byName = Object.fromEntries(cols.map((c) => [c.name, c]));
+    const dflt = (c) => String(c.dflt_value ?? '').replace(/^(['"])(.*)\1$/, '$2');
+    const want = { commercial_use_status: 'Unverified', data_privacy_status: 'Unverified', api_availability_status: 'Unverified', verification_source: '', notes: '' };
+    const bad = [];
+    for (const [name, def] of Object.entries(want)) {
+      const c = byName[name];
+      if (!c) { bad.push(`${name}:MISSING`); continue; }
+      if (c.notnull !== 1 || dflt(c) !== def) bad.push(`${name}:notnull=${c.notnull} dflt=${JSON.stringify(dflt(c))}`);
+    }
+    if (!byName['last_verified_at']) bad.push('last_verified_at:MISSING');
+    check('M1. Schema: 5 trust columns + last_verified_at, NOT NULL, contract defaults', bad.length === 0, bad.join(' ') || `cols=${cols.map((c) => c.name).join(',')}`);
+  }
+  {
+    const m2 = tryGet(db, `SELECT COUNT(*) AS total,
+      SUM(CASE WHEN commercial_use_status IS NULL OR data_privacy_status IS NULL OR api_availability_status IS NULL OR verification_source IS NULL OR notes IS NULL OR last_verified_at IS NULL THEN 1 ELSE 0 END) AS nulls,
+      SUM(CASE WHEN commercial_use_status = '' OR data_privacy_status = '' OR api_availability_status = '' THEN 1 ELSE 0 END) AS empty_statuses FROM tools`);
+    check('M2. All 91 tools carry the 6 trust fields; zero nulls / empty statuses',
+      !!m2 && !m2._error && m2.total === 91 && m2.nulls === 0 && m2.empty_statuses === 0,
+      m2 && m2._error ? m2._error : JSON.stringify(m2 || null));
+  }
+  {
+    const enumRows = tryAll(db, 'SELECT commercial_use_status c, data_privacy_status p, api_availability_status a FROM tools');
+    let badEnum = -1; let enumErr = '';
+    const dist = { c: {}, p: {}, a: {} };
+    if (enumRows === null) enumErr = 'trust columns missing';
+    else {
+      badEnum = tryGet(db, "SELECT COUNT(*) AS n FROM tools WHERE commercial_use_status NOT IN ('Verified','Unverified') OR data_privacy_status NOT IN ('Verified','Unverified') OR api_availability_status NOT IN ('Available','Unverified','N/A')").n;
+      for (const row of enumRows) {
+        dist.c[row.c] = (dist.c[row.c] || 0) + 1; dist.p[row.p] = (dist.p[row.p] || 0) + 1; dist.a[row.a] = (dist.a[row.a] || 0) + 1;
+      }
+    }
+    let mism = 0; let matched = 0;
+    if (trustMap.ok && enumRows !== null) {
+      for (const e of trustMap.entries) {
+        const row = tryGet(db, 'SELECT commercial_use_status c, data_privacy_status p, api_availability_status a, verification_source s, notes n FROM tools WHERE slug = ?', e.slug);
+        if (!row || row._error) { mism++; continue; }
+        matched++;
+        if (row.c !== e.commercial_use_status || row.p !== e.data_privacy_status || row.a !== e.api_availability_status || row.s !== e.verification_source || row.n !== e.notes) mism++;
+      }
+    } else if (trustMap.ok) mism = 91;
+    check('M3. Enum validity + per-slug parity vs lib/trust-map.json',
+      enumErr === '' && badEnum === 0 && mism === 0 && matched === 91,
+      `${enumErr || `bad-enum=${badEnum}`} parity=${matched - mism}/91 dist=${JSON.stringify(dist)}`);
+  }
+
   /* ---- JSON storage fallback smoke test ---- */
   const PORT2 = PORT + 1;
   const jsonDir = fs.mkdtempSync(path.join(os.tmpdir(), 'atlas-json-'));
@@ -284,9 +418,58 @@ async function main() {
     const c2 = csrfOf(sid2);
     const f2 = await req2(PORT2, 'POST', '/api/favorites/toggle', { jar: j2, accept: 'application/json', body: { tool_id: 2, _csrf: c2 } });
     check('L2. JSON store persists favorites', JSON.parse(f2.text).saved === true);
+    /* ---- M7: JsonStore parity (direct app.json read) ---- */
+    {
+      const appJson = path.join(jsonDir, 'app.json');
+      let ok7 = false; let ev7 = '';
+      if (!fs.existsSync(appJson)) ev7 = 'no app.json written';
+      else {
+        try {
+          const jt = JSON.parse(fs.readFileSync(appJson, 'utf8')).tools || [];
+          const jAllOk = jt.length === 91 && jt.every((t) =>
+            ['Verified', 'Unverified'].includes(t.commercial_use_status)
+            && ['Verified', 'Unverified'].includes(t.data_privacy_status)
+            && ['Available', 'Unverified', 'N/A'].includes(t.api_availability_status)
+            && (t.last_verified_at || t.last_verified)
+            && typeof t.verification_source === 'string' && typeof t.notes === 'string');
+          const cmp = ['chatgpt', 'n8n', 'pi'].map((slug) => {
+            const j = jt.find((t) => t.slug === slug);
+            const s = tryGet(db, 'SELECT commercial_use_status c, data_privacy_status p, api_availability_status a, verification_source v, notes n FROM tools WHERE slug = ?', slug);
+            return !!(j && s && !s._error && j.commercial_use_status === s.c && j.data_privacy_status === s.p && j.api_availability_status === s.a && j.verification_source === s.v && j.notes === s.n);
+          });
+          ok7 = jAllOk && cmp.every(Boolean);
+          ev7 = `tools=${jt.length} fields-ok=${jAllOk} parity(${cmp.join('/')})`;
+        } catch (e) { ev7 = 'unreadable: ' + e.message; }
+      }
+      check('M7. JsonStore parity: app.json 91 tools, 6 fields each, spot-match sqlite', ok7, ev7);
+    }
     s2.kill();
   } else {
     check('L1. JSON storage fallback boots (FC-compatible)', false, 'did not start');
+  }
+
+  /* ---- M10: vendored trust-map artifact ---- */
+  {
+    let ok10 = false; let ev10 = '';
+    if (!trustMap.ok) ev10 = `missing/unreadable: ${trustMap.error}`;
+    else {
+      const entries = trustMap.entries;
+      const slugs = entries.map((e) => e.slug);
+      const unique = new Set(slugs).size === slugs.length;
+      const fieldsOk = entries.every((e) => e && typeof e === 'object'
+        && ['commercial_use_status', 'data_privacy_status', 'api_availability_status', 'last_verified', 'verification_source', 'notes'].every((k) => k in e)
+        && ['Verified', 'Unverified'].includes(e.commercial_use_status)
+        && ['Verified', 'Unverified'].includes(e.data_privacy_status)
+        && ['Available', 'Unverified', 'N/A'].includes(e.api_availability_status)
+        && typeof e.last_verified === 'string' && e.last_verified.length > 0
+        && typeof e.verification_source === 'string' && typeof e.notes === 'string');
+      let seedSlugs = new Set();
+      try { seedSlugs = new Set(require(path.join(ROOT, 'lib', 'seed-data.js')).TOOLS.map((t) => t.slug)); } catch (e2) { ev10 = 'seed-data unreadable: ' + e2.message; }
+      const slugsInSeed = slugs.every((s) => seedSlugs.has(s));
+      ok10 = entries.length === 91 && unique && fieldsOk && slugsInSeed && seedSlugs.size === 91;
+      ev10 = `entries=${entries.length} unique=${unique} fields=${fieldsOk} slugs-in-seed=${slugsInSeed} seed-slugs=${seedSlugs.size}`;
+    }
+    check('M10. lib/trust-map.json: 91 entries, unique slugs, 6 fields, valid enums', ok10, ev10);
   }
 
   /* ---- summary ---- */

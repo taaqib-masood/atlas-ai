@@ -783,6 +783,25 @@
   }
 
   /* ==================== Live Filter Chips (browse grid, client-side) ==================== */
+  /* Trust-filter state shared by the category chips (initLiveFilters) and the
+     trust segments (initTrustFilters): both compute combined visibility and
+     update the same live-status line. Persisted under 'atlas-trust-filter'. */
+  const TRUST_FILTER_KEY = 'atlas-trust-filter';
+  let trustFilterState = 'all';
+
+  /* Card-level trust match. Segments: all | commercial | privacy | api |
+     unverified (gap view: any field unverified; N/A is not a gap). */
+  function trustMatchCard(card, seg) {
+    if (seg === 'all') return true;
+    if (seg === 'commercial') return card.dataset.commercial === 'verified';
+    if (seg === 'privacy') return card.dataset.privacy === 'verified';
+    if (seg === 'api') return card.dataset.api === 'verified';
+    if (seg === 'unverified') {
+      return card.dataset.commercial === 'unverified' || card.dataset.privacy === 'unverified' || card.dataset.api === 'unverified';
+    }
+    return true;
+  }
+
   function initLiveFilters() {
     const grid = document.querySelector('.tool-grid');
     const facets = document.querySelector('.facets');
@@ -829,7 +848,7 @@
         setTimeout(function () { chip.classList.remove('pulsing'); }, 450);
         let visible = 0;
         cards.forEach(function (c) {
-          const match = k === 'All' || (c.dataset.category || 'Other') === k;
+          const match = (k === 'All' || (c.dataset.category || 'Other') === k) && trustMatchCard(c, trustFilterState);
           if (hideTimers[c]) { clearTimeout(hideTimers[c]); delete hideTimers[c]; }
           if (match) {
             c.classList.remove('hide-card');
@@ -854,6 +873,63 @@
     grid.parentNode.insertBefore(chipRow, grid);
     grid.parentNode.insertBefore(status, grid);
     status.textContent = cards.length + ' tools on this page';
+  }
+
+  /* ==================== Trust filter segments (browse, client-side) ====================
+     SSR buttons (.trust-filter) are wired here: single-select, aria-pressed,
+     persisted in localStorage, applied without a page reload, and composed
+     with the category chips (initLiveFilters) + server-side search/sort. */
+  function initTrustFilters() {
+    const grid = document.querySelector('.tool-grid');
+    const row = document.querySelector('.trust-filter');
+    if (!grid || !row) return;
+    const cards = Array.from(grid.querySelectorAll('.tool-card'));
+    if (!cards.length) return;
+    const chips = Array.from(row.querySelectorAll('[data-trust]'));
+    const status = document.querySelector('.live-status');
+
+    // Restore persisted selection (single-select token).
+    try {
+      const saved = localStorage.getItem(TRUST_FILTER_KEY);
+      if (saved && chips.some(function (c) { return c.dataset.trust === saved; })) trustFilterState = saved;
+    } catch (e) { /* storage unavailable */ }
+
+    const catActive = function () {
+      const c = document.querySelector('.live-chip.active[data-cat]');
+      return c ? c.dataset.cat : 'All';
+    };
+
+    const apply = function (seg, announce) {
+      trustFilterState = seg;
+      try { localStorage.setItem(TRUST_FILTER_KEY, seg); } catch (e) { /* ignore */ }
+      chips.forEach(function (c) {
+        const on = c.dataset.trust === seg;
+        c.classList.toggle('active', on);
+        c.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+      const cat = catActive();
+      let visible = 0;
+      cards.forEach(function (c) {
+        const match = trustMatchCard(c, seg) && (cat === 'All' || (c.dataset.category || 'Other') === cat);
+        if (match) {
+          c.classList.remove('hide-card');
+          c.style.display = '';
+          visible++;
+        } else {
+          c.classList.add('hide-card');
+          c.style.display = 'none';
+        }
+      });
+      if (status) {
+        status.textContent = visible + ' of ' + cards.length + ' tools shown';
+        if (announce) { status.classList.remove('flash'); void status.offsetWidth; status.classList.add('flash'); }
+      }
+    };
+
+    chips.forEach(function (c) {
+      c.addEventListener('click', function () { apply(c.dataset.trust, true); });
+    });
+    apply(trustFilterState, false);
   }
 
   /* ==================== Staggered card entrance ==================== */
@@ -917,6 +993,7 @@
     initScrollProgress();
     initCardKeyboardNav();
     initLiveFilters();
+    initTrustFilters();
     initCardEntrance();
     initCompareRemove();
   }

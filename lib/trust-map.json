@@ -1,0 +1,821 @@
+[
+  {
+    "slug": "adcreative-ai",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Paid; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Paid commercial product; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "adobe-firefly",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "agentgpt",
+    "commercial_use_status": "Unverified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: unverified (no basis in seed record); privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Believed open-source, but record omits it and license is unverified — left Unverified."
+  },
+  {
+    "slug": "aiva",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "ajelix",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "akkio",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Paid; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Paid commercial product; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "amazon-q-developer",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "autogpt",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed description/tagline states open-source; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Open-source per seed description; privacy posture and API status unverified from seed record."
+  },
+  {
+    "slug": "canva-magic-studio",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "chatgpt",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "claude",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Available",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: seed description/tagline mentions API",
+    "notes": "Public API mentioned in seed description; privacy/commercial status as noted."
+  },
+  {
+    "slug": "clockwise",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "connected-papers",
+    "commercial_use_status": "Unverified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: unverified (no basis in seed record); privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "No commercial basis in seed record (Free, not stated open-source); privacy and API unverified."
+  },
+  {
+    "slug": "consensus",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "copy-ai",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "crewai",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed description/tagline states open-source; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Open-source per seed description; privacy posture and API status unverified from seed record."
+  },
+  {
+    "slug": "cursor",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "dall-e",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "descript",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "elevenlabs",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Widely known voice API vendor, but seed record gives no API or privacy basis — left Unverified."
+  },
+  {
+    "slug": "elicit",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "figma-ai",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "fireflies-ai",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "flux",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Available",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: seed description/tagline mentions API",
+    "notes": "Open-weight (not \"open-source\") per record; commercial basis is Freemium API; model license terms unverified."
+  },
+  {
+    "slug": "framer",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "frase",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Paid; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Paid commercial product; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "galileo-ai",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Paid; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Paid commercial product; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "gemini",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "github-copilot",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Paid; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Paid product; record gives no API or privacy basis — left Unverified."
+  },
+  {
+    "slug": "grammarly",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "hex",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "heygen",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "hubspot-ai",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "ideogram",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "jasper",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Paid; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Paid commercial product; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "jenni-ai",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "julius-ai",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "kaiber",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Paid; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Paid commercial product; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "leonardo-ai",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Available",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: seed description/tagline mentions API",
+    "notes": "Public API mentioned in seed description; privacy/commercial status as noted."
+  },
+  {
+    "slug": "lindy",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "looka",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Paid; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Paid commercial product; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "luma-dream-machine",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "make",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "manus",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "mem",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "microsoft-copilot",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "midjourney",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Paid; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Paid commercial product; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "mistral-le-chat",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (seed record has only marketing wording, no concrete terms); api: unverified (no API signal in seed record)",
+    "notes": "Record cites a \"European privacy posture\" but no concrete terms — privacy left Unverified."
+  },
+  {
+    "slug": "motion",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Paid; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Paid commercial product; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "mubert",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "murf-ai",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "n8n",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Verified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed description/tagline states open-source; privacy: seed description states concrete local/private deployment attribute; api: unverified (no API signal in seed record)",
+    "notes": "Open-source and self-hostable with full data control per record; policy text itself not reviewed."
+  },
+  {
+    "slug": "notebooklm",
+    "commercial_use_status": "Unverified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: unverified (no basis in seed record); privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "No commercial basis in seed record (Free, not stated open-source); privacy and API unverified."
+  },
+  {
+    "slug": "notion-ai",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "openai-whisper",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Available",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed description/tagline states open-source; privacy: unverified (no privacy signal in seed record); api: seed description/tagline mentions API",
+    "notes": "Open-source per record; API explicitly mentioned; no privacy posture claimed in record."
+  },
+  {
+    "slug": "otter-ai",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "perplexity",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "pi",
+    "commercial_use_status": "Unverified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "N/A",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: unverified (no basis in seed record); privacy: unverified (no privacy signal in seed record); api: N/A — record frames product as personal consumer companion, no API signal",
+    "notes": "Free consumer companion app; no commercial or API basis in record — API marked N/A."
+  },
+  {
+    "slug": "pika",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "play-ht",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Available",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: seed description/tagline mentions API",
+    "notes": "Public API mentioned in seed description; privacy/commercial status as noted."
+  },
+  {
+    "slug": "polymer",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "predis-ai",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "quillbot",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "reclaim-ai",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "recraft",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "relevance-ai",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Paid; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Paid commercial product; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "replit",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "rows-ai",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "runway",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "scispace",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "scite",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Paid; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Paid commercial product; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "semantic-scholar",
+    "commercial_use_status": "Unverified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: unverified (no basis in seed record); privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "No commercial basis in seed record (Free, not stated open-source); privacy and API unverified."
+  },
+  {
+    "slug": "simplified",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "sora",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Paid; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Paid commercial product; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "soundraw",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Paid; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Paid commercial product; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "sourcegraph-cody",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "speechify",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "stable-diffusion",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed description/tagline states open-source; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Open-source per record, runs locally or via services; no privacy posture claim in record."
+  },
+  {
+    "slug": "sudowrite",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Paid; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Paid commercial product; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "suno",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "surfer",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Paid; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Paid commercial product; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "synthesia",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Paid; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Paid commercial product; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "tabnine",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Verified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: seed description states concrete local/private deployment attribute; api: unverified (no API signal in seed record)",
+    "notes": "Record states private, locally deployable models for enterprise data policies; policy text itself not reviewed."
+  },
+  {
+    "slug": "udio",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "uizard",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "v0",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "windsurf",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "wordtune",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "writesonic",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  },
+  {
+    "slug": "you-com",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (seed record has only marketing wording, no concrete terms); api: unverified (no API signal in seed record)",
+    "notes": "Record cites \"privacy-focused search modes\" but no concrete terms — privacy left Unverified."
+  },
+  {
+    "slug": "zapier",
+    "commercial_use_status": "Verified",
+    "data_privacy_status": "Unverified",
+    "api_availability_status": "Unverified",
+    "last_verified": "2026-08-17",
+    "verification_source": "commercial: seed pricing_model=Freemium; privacy: unverified (no privacy signal in seed record); api: unverified (no API signal in seed record)",
+    "notes": "Freemium product with commercial plans; privacy and API status unverified from seed record."
+  }
+]

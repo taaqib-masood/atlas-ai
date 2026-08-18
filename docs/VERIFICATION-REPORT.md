@@ -151,10 +151,27 @@
 | Newsletter | POST /api/newsletter/subscribe | — | — | ✅ SQLite |
 
 ## Test Suite Results
-- **53/53 end-to-end checks PASS ✅** (browse, filter, search, sort, detail, auth, favorites, dashboard, recommendations, admin CRUD + history, CSRF, rate-limit, SEO, performance, storage fallback)
+- **63/63 end-to-end checks PASS ✅** (browse, filter, search, sort, detail, auth, favorites, dashboard, recommendations, admin CRUD + history, CSRF, rate-limit, SEO, performance, storage fallback, trust metadata M1–M10)
 
 ## Traceability Matrix Sample Check (3 random deliverables)
 
 1. **F-6 Maker Analytics** → Use cases S1-2, S2-2 → Artifact: `/maker/analytics` page → **✅ Match**
 2. **F-13 Student Hub** → Use cases D4-1, D4-2, D4-3 → Artifact: `/student` page → **✅ Match**
 3. **F-1 Task Search** → Use cases D1-1, D2-1, D5-2 → Artifact: `/tasks` page → **✅ Match**
+
+---
+
+## Trust Metadata Verification — 2026-08-17
+
+**Scope:** Trust & compliance metadata for all 91 tools (commercial use / data privacy / API availability) — the "trust and compliance" pain point for professional AI users.
+
+### Changes
+- 5 new `tools` columns (append-only ALTER, TEXT NOT NULL DEFAULT): `commercial_use_status`, `data_privacy_status`, `api_availability_status` (default `'Unverified'`), `verification_source`, `notes`; existing `last_verified_at` reused.
+- `lib/trust-map.json` vendored (byte-identical to the audited 91-entry map, sha256 `201be9ed…`); merged by slug in `seedStore()` every boot (UPDATE-only, single transaction, never overwrites user-set values); fresh DBs seed with trust fields.
+- UI: monochrome `✓/—/N/A` badges per card, two-line legend, 5 single-select trust filters (localStorage `atlas-trust-filter`), detail-page trust section, admin Verify sets `verification_source='admin'`. JsonStore parity preserved.
+
+### Result
+- Verification suite: **63/63 PASS** (53 baseline + M1–M10 trust checks), exit 0.
+- Live `data/app.db`: migration idempotent (2 passes, 91 rows intact), backfill `91 rows`, 0 nulls.
+- Status distribution matches map exactly — commercial 86 Verified / 5 Unverified; privacy 2 Verified / 89 Unverified; API 5 Available / 85 Unverified / 1 N/A.
+- No invented legal claims: every status is traceable to `verification_source` + `last_verified`; ambiguous → `Unverified` by policy.
