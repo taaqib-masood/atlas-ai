@@ -79,14 +79,14 @@ The Atlas AI logo lives in `public/logo/` and `public/favicon.*` (served at `/as
 
 | File | Use |
 |---|---|
-| `public/logo/logo-mark.svg` / `.png` | Globe+pin mark, black on transparent — light surfaces |
+| `public/logo/logo-mark.svg` / `.png` | Wireframe globe mark, black on transparent — light surfaces |
 | `public/logo/logo-mark-white.svg` | Same mark, white — dark surfaces (used by the app header in dark mode) |
 | `public/logo/logo-mark-mono.svg` / `.png` | Strict monochrome version (no accent) — small-size / one-color use |
 | `public/logo/logo.svg` / `.png` | Full lockup (mark + **ATLAS AI** wordmark) — light surfaces |
 | `public/logo/logo-white.svg` / `.png` | Full lockup — dark surfaces |
 | `public/favicon.svg` + `favicon-32/64/180/192.png` | Browser tab / apple-touch-icon / PWA icon |
 
-**Design system (Swiss minimal):** pure black `#000000`, paper `#FAFAF7`, one accent `#C05621`. The mark is a globe (circle) with an equator band and a location square — three flat geometric shapes, no gradients, no fine lines, legible at 16 px.
+**Design system (Swiss minimal):** pure black `#000000`, paper `#FAFAF7`, no accent color — full monochrome. The mark is a wireframe atlas globe (circle + two meridian ellipses + equator + two parallel arcs), 2px strokes, no gradients, legible at 16 px.
 
 **How to update:** replace the SVG sources in `public/logo/` (they are the single source of truth), then regenerate PNGs from the SVGs (e.g. `qlmanage -t -s 512 -o . <file>.svg`, resize with `sips`). The app header reads `logo-mark.svg` / `logo-mark-white.svg` via `.brand-mark` in `public/app.css`; the favicon is `public/favicon.svg` referenced in `lib/html.js`; the PWA manifest icons are in `lib/extensions.js`. Bump the `?v=` query on the stylesheet link in `lib/html.js` after CSS changes so browsers refetch.
 

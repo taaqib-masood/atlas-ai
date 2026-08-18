@@ -254,7 +254,7 @@ async function main() {
       _csrf: acsrf, name: 'TestPress AI', tagline: 'AI press release writer for startups',
       description: 'TestPress AI drafts press releases and product announcements from bullet points, with tone controls and distribution checklists. (Test fixture for verification.)',
       category: 'Writing', url: 'https://testpress.example.com', pricing_model: 'Freemium',
-      tags: 'press, writing, pr', popularity: '55', logo_color: '#C05621', status: 'draft',
+      tags: 'press, writing, pr', popularity: '55', logo_color: '#000000', status: 'draft',
     },
   });
   check('G4. Admin creates tool (draft)', r.status === 303);
