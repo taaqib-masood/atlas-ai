@@ -13,6 +13,7 @@ const ext = require('./lib/extensions');
 const rf = require('./lib/report-features');
 const cp = require('./lib/critical-pending');
 const mp = require('./lib/more-pending');
+const sb = require('./lib/stack-builder');
 
 const PORT = parseInt(process.env.PORT || '3000', 10);
 const HOST = process.env.HOST || '0.0.0.0';
@@ -27,6 +28,7 @@ try { cp.migrateReferralRedirect(store); } catch (e) { console.error('Referral m
 try { mp.migrateReviewVerification(store); console.log('  review_verify migrated'); } catch (e) { console.error('Review migration warning:', e.message); }
 try { mp.migrateDeals(store); console.log('  deals migrated'); } catch (e) { console.error('Deals migration warning:', e.message); }
 try { mp.migrateMakerTiers(store); console.log('  maker_tiers migrated'); } catch (e) { console.error('Maker tiers migration warning:', e.message); }
+try { sb.migrate(store); console.log('  stack_builder migrated'); } catch (e) { console.error('Stack builder migration warning:', e.message); }
 console.log('Migrations complete.');
 
 handlers.configure({ baseUrl: process.env.BASE_URL || `http://localhost:${PORT}` });

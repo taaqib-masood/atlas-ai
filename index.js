@@ -13,6 +13,7 @@ const { handleRequest } = require('./lib/core');
 const handlers = require('./lib/handlers');
 
 const store = openStore();
+try { require('./lib/stack-builder').migrate(store); } catch (e) { /* non-fatal */ }
 try { require('./lib/seed').seedStore(store); } catch (e) { /* idempotent, non-fatal */ }
 handlers.configure({ baseUrl: process.env.BASE_URL || '' });
 

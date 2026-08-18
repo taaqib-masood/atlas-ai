@@ -4,7 +4,7 @@
  * walks the full user/admin journey with real HTTP requests, and prints a
  * PASS/FAIL report per Goal Brief acceptance criterion.
  *
- * Checks: 63 total — A0–L2 baseline (53) + M1–M10 trust-metadata (10).
+ * Checks: 75 total — A0–L2 baseline (53) + M1–M10 trust-metadata (10) + S1–S12 stacks (12).
  *
  * Usage: node scripts/verify.js
  */
@@ -470,6 +470,139 @@ async function main() {
       ev10 = `entries=${entries.length} unique=${unique} fields=${fieldsOk} slugs-in-seed=${slugsInSeed} seed-slugs=${seedSlugs.size}`;
     }
     check('M10. lib/trust-map.json: 91 entries, unique slugs, 6 fields, valid enums', ok10, ev10);
+  }
+
+  /* ---- S-series: AI Stack Builder ---- */
+  {
+  const stackEmail = `stack${Date.now()}@test.dev`;
+  const sj = new Jar();
+  await register(sj, stackEmail, 'Stack User', 'StackPass123!');
+  const ssid = sj.cookies.get('sid');
+  const scsrf = csrfOf(ssid);
+  const totalCentsOf = (html) => Number((html.match(/data-stack-total-cents="(\d+)"/) || [])[1]);
+
+  let r = await req('POST', '/stacks', { jar: sj, form: { _csrf: scsrf, name: 'My AI Stack' } });
+  const stackId = (r.headers.get('location') || '').match(/\/stacks\/(\d+)/)?.[1] ?? null;
+  check('S1. Create stack', r.status === 303 && !!stackId, `id=${stackId} location=${r.headers.get('location')}`);
+
+  const stackItems = [
+    { name: 'ChatGPT Plus',    provider: 'OpenAI',     category: 'Chat Assistants',      monthly_cost: '20.00', active: '1' },
+    { name: 'Midjourney Basic', provider: 'Midjourney', category: 'Image Generation',     monthly_cost: '10.00', active: '1' },
+    { name: 'Claude Pro',      provider: 'Anthropic',  category: 'Chat Assistants',      monthly_cost: '20.00', active: '1' },
+    { name: 'GitHub Copilot',  provider: 'GitHub',     category: 'Coding & Development', monthly_cost: '10.00', active: '1' },
+    { name: 'Perplexity Pro',  provider: 'Perplexity', category: 'Research & Knowledge', monthly_cost: '20.00', active: '0' },
+  ];
+  let added = 0;
+  for (const it of stackItems) {
+    const form = { _csrf: scsrf, name: it.name, provider: it.provider, category: it.category, monthly_cost: it.monthly_cost, quantity: '1' };
+    if (it.active === '1') form.active = '1';
+    const rr = await req('POST', `/stacks/${stackId}/items`, { jar: sj, form });
+    if (rr.status === 303) added++;
+  }
+  r = await req('GET', `/stacks/${stackId}`, { jar: sj });
+  check('S2. Add items', added === 5 && stackItems.every((i) => r.text.includes(i.name)), `added=${added}/5`);
+
+  const totalCents = totalCentsOf(r.text);
+  check('S3. Total = active-only sum', totalCents === 6000 && r.text.includes('$60.00') && !r.text.includes('$80.00') && r.text.includes('Perplexity Pro'),
+    `total=${totalCents}¢ ($60.00 expected; $80.00 must be absent)`);
+
+  r = await req('GET', `/stacks/${stackId}`, { jar: sj });
+  const list = await req('GET', '/stacks', { jar: sj });
+  check('S4. Persists across re-GET', totalCentsOf(r.text) === 6000 && stackItems.every((i) => r.text.includes(i.name))
+      && list.text.includes('My AI Stack') && list.text.includes('$60.00'),
+    `re-get=${totalCentsOf(r.text)}¢ list-shows-stack=${list.text.includes('My AI Stack')}`);
+
+  const chatId = tryGet(db, "SELECT id FROM stack_items WHERE stack_id = ? AND name = 'ChatGPT Plus'", Number(stackId));
+  const up = await req('POST', `/stacks/${stackId}/items/${chatId.id}/update`, { jar: sj, form: { _csrf: scsrf, name: 'ChatGPT Plus', provider: 'OpenAI', monthly_cost: '25.00', quantity: '1', active: '1' } });
+  r = await req('GET', `/stacks/${stackId}`, { jar: sj });
+  check('S5. Edit cost → total updates', up.status === 303 && totalCentsOf(r.text) === 6500 && r.text.includes('$65.00'),
+    `chatgpt $20→$25 total=${totalCentsOf(r.text)}¢`);
+
+  const mjId = tryGet(db, "SELECT id FROM stack_items WHERE stack_id = ? AND name = 'Midjourney Basic'", Number(stackId));
+  const del = await req('POST', `/stacks/${stackId}/items/${mjId.id}/delete`, { jar: sj, form: { _csrf: scsrf } });
+  r = await req('GET', `/stacks/${stackId}`, { jar: sj });
+  check('S6. Delete item → total updates', del.status === 303 && totalCentsOf(r.text) === 5500 && !r.text.includes('Midjourney Basic'),
+    `midjourney removed total=${totalCentsOf(r.text)}¢`);
+
+  const clId = tryGet(db, "SELECT id FROM stack_items WHERE stack_id = ? AND name = 'Claude Pro'", Number(stackId));
+  await req('POST', `/stacks/${stackId}/items/${clId.id}/update`, { jar: sj, form: { _csrf: scsrf, name: 'Claude Pro', provider: 'Anthropic', monthly_cost: '20.00', quantity: '1' } });
+  r = await req('GET', `/stacks/${stackId}`, { jar: sj });
+  const off = totalCentsOf(r.text);
+  const offText = r.text;
+  await req('POST', `/stacks/${stackId}/items/${clId.id}/update`, { jar: sj, form: { _csrf: scsrf, name: 'Claude Pro', provider: 'Anthropic', monthly_cost: '20.00', quantity: '1', active: '1' } });
+  r = await req('GET', `/stacks/${stackId}`, { jar: sj });
+  const on = totalCentsOf(r.text);
+  check('S7. Toggle active → total updates', off === 3500 && offText.includes('$35.00') && on === 5500 && r.text.includes('$55.00'),
+    `claude off→${off}¢ on→${on}¢`);
+
+  const stRow = tryGet(db, 'SELECT id, user_id, name, created_at, updated_at FROM stacks WHERE id = ?', Number(stackId));
+  const itRows = tryAll(db, 'SELECT name, monthly_cost_cents, active, created_at, updated_at FROM stack_items WHERE stack_id = ?', Number(stackId));
+  const sjUid = tryGet(db, 'SELECT id FROM users WHERE email = ?', stackEmail);
+  const activeSum = (itRows || []).filter((x) => x.active === 1).reduce((a, b) => a + b.monthly_cost_cents, 0);
+  const allStamped = !!itRows && itRows.every((x) => x.created_at && x.updated_at);
+  const perpInactive = (itRows || []).find((x) => x.name === 'Perplexity Pro');
+  check('S8. Rows persisted w/ owner + timestamps (SQL)', !!stRow && !stRow._error && stRow.user_id === (sjUid && sjUid.id)
+      && stRow.name === 'My AI Stack' && !!stRow.created_at && !!stRow.updated_at
+      && itRows && itRows.length === 4 && allStamped && activeSum === 5500
+      && perpInactive && perpInactive.active === 0,
+    `items=${itRows && itRows.length} activeSum=${activeSum}¢ owner=${stRow && stRow.user_id} timestamps=${allStamped}`);
+
+  const before = tryGet(db, 'SELECT COUNT(*) n FROM stack_items WHERE stack_id = ?', Number(stackId)).n;
+  let rejects = 0;
+  let rr = await req('POST', `/stacks/${stackId}/items`, { jar: sj, form: { _csrf: scsrf, name: 'Bad Negative', monthly_cost: '-5.00' } });
+  if (rr.status === 200 && rr.text.includes('field-error')) rejects++;
+  rr = await req('POST', `/stacks/${stackId}/items`, { jar: sj, form: { _csrf: scsrf, name: 'Bad Precision', monthly_cost: '10.999' } });
+  if (rr.status === 200 && rr.text.includes('field-error')) rejects++;
+  rr = await req('POST', '/stacks', { jar: sj, form: { _csrf: scsrf, name: '   ' } });
+  if (rr.status === 200 && rr.text.includes('field-error')) rejects++;
+  const after = tryGet(db, 'SELECT COUNT(*) n FROM stack_items WHERE stack_id = ?', Number(stackId)).n;
+  const stacksAfter = tryGet(db, 'SELECT COUNT(*) n FROM stacks').n;
+  check('S9. Validation rejects negative / >2-decimal / empty name', rejects === 3 && after === before && stacksAfter === 1,
+    `rejects=${rejects}/3 items=${before}→${after} stacks=${stacksAfter}`);
+
+  r = await req('POST', '/stacks', { jar: sj, form: { _csrf: scsrf, name: 'Empty Stack' } });
+  const emptyId = (r.headers.get('location') || '').match(/\/stacks\/(\d+)/)?.[1] ?? null;
+  r = await req('GET', `/stacks/${emptyId}`, { jar: sj });
+  check('S10. Empty stack renders empty state', emptyId && r.status === 200 && totalCentsOf(r.text) === 0
+      && (r.text.includes('empty-state') || r.text.includes('No items')),
+    `id=${emptyId} total=${totalCentsOf(r.text)}¢ empty-state=${r.text.includes('empty-state') || r.text.includes('No items')}`);
+
+  const anon = await req('GET', '/stacks', { jar: new Jar() });
+  const j2 = new Jar();
+  await register(j2, `s2${Date.now()}@test.dev`, 'Other User', 'OtherPass123!');
+  const foreign = await req('GET', `/stacks/${stackId}`, { jar: j2 });
+  check('S11. Unauth redirect + cross-user denied', anon.status === 303 && (anon.headers.get('location') || '').startsWith('/login')
+      && (foreign.status === 403 || foreign.status === 404) && !foreign.text.includes('My AI Stack'),
+    `anon=${anon.status}→${anon.headers.get('location')} foreign=${foreign.status}`);
+
+  const PORT3 = PORT + 2;
+  const jsonDir2 = fs.mkdtempSync(path.join(os.tmpdir(), 'atlas-stack-json-'));
+  const s3 = spawn('node', ['server.js'], { cwd: ROOT, env: { ...process.env, PORT: String(PORT3), DATA_DIR: jsonDir2, STORAGE: 'json', BASE_URL: `http://127.0.0.1:${PORT3}` }, stdio: 'ignore' });
+  let up3 = false;
+  for (let i = 0; i < 40; i++) { try { const h = await fetch(`http://127.0.0.1:${PORT3}/healthz`); if (h.ok) { up3 = true; break; } } catch { /* */ } await new Promise((res) => setTimeout(res, 250)); }
+  if (up3) {
+    const j3 = new Jar();
+    await req2(PORT3, 'GET', '/register', { jar: j3 });
+    await req2(PORT3, 'POST', '/register', { jar: j3, form: { _csrf: j3.csrf(), name: 'Json Stack User', email: 'stackjson@test.dev', password: 'JsonPass123!', confirm: 'JsonPass123!' } });
+    const jcsrf = csrfOf(j3.cookies.get('sid'));
+    const cr = await req2(PORT3, 'POST', '/stacks', { jar: j3, form: { _csrf: jcsrf, name: 'JSON Stack' } });
+    const jstackId = (cr.headers.get('location') || '').match(/\/stacks\/(\d+)/)?.[1] ?? null;
+    await req2(PORT3, 'POST', `/stacks/${jstackId}/items`, { jar: j3, form: { _csrf: jcsrf, name: 'ChatGPT Plus', monthly_cost: '20.00', quantity: '1', active: '1' } });
+    const jdetail = await req2(PORT3, 'GET', `/stacks/${jstackId}`, { jar: j3 });
+    const appJson = JSON.parse(fs.readFileSync(path.join(jsonDir2, 'app.json'), 'utf8'));
+    const jstacks = appJson.stacks || [];
+    const jitems = appJson.stack_items || [];
+    const jTotalCents = totalCentsOf(jdetail.text);
+    const jdetail2 = await req2(PORT3, 'GET', `/stacks/${jstackId}`, { jar: j3 });
+    const jReload = totalCentsOf(jdetail2.text) === 2000;
+    check('S12. JsonStore parity: stack+item persist, total survives reload',
+      jTotalCents === 2000 && jstacks.length === 1 && jitems.length === 1
+      && jitems[0] && jitems[0].monthly_cost_cents === 2000 && jitems[0].active === 1 && jReload,
+      `stacks=${jstacks.length} items=${jitems.length} cents=${jitems[0] && jitems[0].monthly_cost_cents} total=${jTotalCents}¢ reload=${jReload}`);
+    s3.kill();
+  } else {
+    check('S12. JsonStore parity: stack+item persist, total survives reload', false, 'json server did not start');
+  }
   }
 
   /* ---- summary ---- */

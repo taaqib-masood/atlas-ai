@@ -827,3 +827,13 @@ input[type="range"]:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 4px var(
 .trust-detail-row { display: contents; }
 .trust-detail dt { color: var(--ink-3); font-weight: 600; padding-top: 1px; }
 .trust-detail dd { margin: 0; color: var(--ink); word-break: break-word; }
+
+/* ---- AI Stack Builder ---- */
+.check-row { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink-2); margin: 6px 0; }
+.check-row input { width: auto; }
+.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+th.num { text-align: right; }
+.row-edit { margin-bottom: 10px; }
+.row-edit summary { cursor: pointer; font-size: 0.78rem; font-weight: 600; color: var(--ink-2); }
+.row-edit .form { margin-top: 10px; gap: 10px; }
+.form-compact { gap: 10px; }
