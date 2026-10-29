@@ -93,10 +93,12 @@ async function register(jar, email, name, password) {
   return r;
 }
 
-async function login(jar, email, password) {
+async function login(jar, email, password, next) {
   await req('GET', '/login', { jar });
   const anon = jar.csrf();
-  const r = await req('POST', '/login', { jar, form: { _csrf: anon, email, password } });
+  const form = { _csrf: anon, email, password };
+  if (next !== undefined) form.next = next;
+  const r = await req('POST', '/login', { jar, form });
   jar.clearCsrf();
   return r;
 }
@@ -237,6 +239,17 @@ async function main() {
   /* ---- CSRF ---- */
   r = await req('POST', '/login', { form: { _csrf: 'wrong', email: user.email, password: user.password } });
   check('F1. CSRF rejection (bad token → 403)', r.status === 403);
+
+  /* ---- open redirect: login 'next' must be a same-site path ---- */
+  const n1 = new Jar();
+  r = await login(n1, user.email, user.password, '//evil.example');
+  check('F3. Login next=//evil.example falls back to /dashboard', r.status === 303 && r.headers.get('location') === '/dashboard', `loc=${r.headers.get('location')}`);
+  const n2 = new Jar();
+  r = await login(n2, user.email, user.password, '/\\evil.example');
+  check('F4. Login next=/\\evil.example falls back to /dashboard', r.status === 303 && r.headers.get('location') === '/dashboard', `loc=${r.headers.get('location')}`);
+  const n3 = new Jar();
+  r = await login(n3, user.email, user.password, '/browse');
+  check('F5. Login next=/browse still honored', r.status === 303 && r.headers.get('location') === '/browse', `loc=${r.headers.get('location')}`);
 
   /* ---- admin workflow ---- */
   const { DatabaseSync } = require('node:sqlite');
