@@ -22,7 +22,6 @@
   'use strict';
 
   const CONTAINER_CLASS = 'atlas-widget';
-  const API_BASE = document.currentScript ? (document.currentScript.dataset.apiOrigin || '') : '';
 
   // -- Styles (self-contained) --
   const STYLES = `
