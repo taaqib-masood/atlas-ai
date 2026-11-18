@@ -147,6 +147,32 @@ for (const storage of ['sqlite', 'json']) {
         assert.ok(editor.body.includes('Unpublished revised fixture'));
       });
 
+      await t.test('one review per user per tool, rate limited, legacy duplicates removed', async () => {
+        const tool = store.listTools({ limit: 1 })[0];
+        const bobToken = store.createSession(bob.id, 60000);
+        const post = async (token, rating) => { const r = await request('POST', '/api/reviews/create', { token, body: { tool_id: tool.id, rating, body: 'Local review fixture content' } }); return { status: r.status, json: JSON.parse(r.body) }; };
+        assert.equal((await post(bobToken, 5)).status, 200);
+        const second = (await post(bobToken, 1)).json;
+        assert.equal(second.count, 1);
+        assert.equal(second.avg, '1.0');
+        if (storage === 'sqlite') {
+          store.db.exec('DROP INDEX idx_reviews_tool_user');
+          store.run("INSERT INTO reviews (tool_id, user_id, rating, body, created_at, updated_at) VALUES (?,?,4,'legacy duplicate','t','t')", [tool.id, bob.id]);
+        } else {
+          store.data.reviews.push({ ...store.data.reviews.find(r => r.user_id === bob.id), id: 9999, rating: 4 });
+        }
+        extensions.migrate(store);
+        const reviews = extensions.helpers.listReviews(store, tool.id).filter(r => r.user_id === bob.id);
+        assert.deepEqual(reviews.map(r => r.rating), [4]);
+        assert.equal((await post(bobToken, 3)).json.count, extensions.helpers.listReviews(store, tool.id).length);
+        if (storage === 'sqlite') {
+          const carol = store.createUser({ email: 'carol@example.test', name: 'Carol', salt: 'unused', passwordHash: 'unused' });
+          const carolToken = store.createSession(carol.id, 60000);
+          for (let i = 0; i < 10; i++) assert.equal((await post(carolToken, 5)).status, 200);
+          assert.equal((await post(carolToken, 5)).status, 429);
+        }
+      });
+
       await t.test('HTTPS configuration marks session cookies Secure without trusting forwarding headers', async () => {
         const prior = process.env.BASE_URL;
         try {
