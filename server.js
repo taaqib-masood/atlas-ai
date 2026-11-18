@@ -18,8 +18,8 @@ const sb = require('./lib/stack-builder');
 const PORT = parseInt(process.env.PORT || '3000', 10);
 const HOST = process.env.HOST || '0.0.0.0';
 const store = openStore();
-// TRUST_PROXY = number of reverse proxies in front of the app (e.g. 1 for nginx); unset = use the socket address.
-const TRUST_PROXY = process.env.TRUST_PROXY ? (parseInt(process.env.TRUST_PROXY, 10) || 1) : 0;
+// TRUST_PROXY = number of reverse proxies in front of the app (e.g. 1 for nginx); unset/0/non-numeric = use the socket address.
+const TRUST_PROXY = Math.max(parseInt(process.env.TRUST_PROXY || '0', 10) || 0, 0);
 function clientIp(req) {
   const remote = req.socket.remoteAddress || '';
   const xff = req.headers['x-forwarded-for'];

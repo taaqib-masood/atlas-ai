@@ -52,7 +52,7 @@ server {
 }
 ```
 
-`TRUST_PROXY` is the number of reverse proxies in front of the app (`1` for the nginx block above). When set, the client IP used for rate limits is the entry that many hops from the right of `X-Forwarded-For`, i.e. the address your outermost trusted proxy saw; entries to its left are client-supplied and ignored. Leave it unset when the app is reachable directly, otherwise clients can spoof `X-Forwarded-For`. Without it, every request behind the proxy shares the proxy's IP (`127.0.0.1`) and one rate-limit bucket.
+`TRUST_PROXY` is the number of reverse proxies in front of the app (`1` for the nginx block above). When set, the client IP used for rate limits is the entry that many hops from the right of `X-Forwarded-For`, i.e. the address your outermost trusted proxy saw; entries to its left are client-supplied and ignored. Unset, `0`, or a non-numeric value disables it. Leave it unset when the app is reachable directly, otherwise clients can spoof `X-Forwarded-For`. Without it, every request behind the proxy shares the proxy's IP (`127.0.0.1`) and one rate-limit bucket.
 
 **First-boot checklist:** (1) set `ADMIN_EMAIL` and a private `ADMIN_PASSWORD` (8–128 characters) before starting; (2) confirm `/healthz` shows `storage: sqlite`; (3) log in with the configured credentials (they are never printed); (4) verify `/sitemap.xml` resolves from the public domain. No administrator is created without a valid password. Existing accounts are not reset; rotate previously default or logged credentials separately.
 
