@@ -93,15 +93,28 @@ for (const storage of ['sqlite', 'json']) {
         const token = mail.html.match(/token=([0-9a-f]{64})/)[1];
         assert.equal((await request('GET', '/newsletter/confirm', { query: { token } })).status, 200);
         assert.equal(activeSubscribers(), 0, 'GET (link prefetch) must not confirm');
+        const formToken = mailTo('flood1@example.test').at(-1).html.match(/token=([0-9a-f]{64})/)[1];
+        const formPage = await request('GET', '/newsletter/confirm', { query: { token: formToken }, headers: { 'content-type': '' } });
+        const csrfCookie = formPage.headers['set-cookie'][0].match(/^csrf=([^;]+)/)[1];
+        const fields = Object.fromEntries([...formPage.body.matchAll(/<input type="hidden" name="(\w+)" value="([^"]*)"/g)].map(m => [m[1], m[2]]));
+        assert.deepEqual(fields, { _csrf: csrfCookie, token: formToken });
+        const submitForm = (cookie) => handleRequest(store, { method: 'POST', path: '/newsletter/confirm', ip: '127.0.0.1',
+          headers: { 'content-type': 'application/x-www-form-urlencoded', cookie }, bodyRaw: new URLSearchParams(fields).toString() });
+        assert.equal((await submitForm('')).status, 403, 'form post needs the csrf cookie');
+        assert.equal(activeSubscribers(), 0);
+        assert.equal((await submitForm(`csrf=${csrfCookie}`)).status, 200);
+        assert.equal(activeSubscribers(), 1);
         assert.equal((await request('POST', '/newsletter/confirm', { body: { token: 'f'.repeat(64) } })).status, 400);
         assert.equal((await request('POST', '/newsletter/confirm', { body: {} })).status, 400);
         assert.equal((await request('POST', '/newsletter/confirm', { body: { token } })).status, 200);
-        assert.equal(activeSubscribers(), 1);
+        assert.equal(activeSubscribers(), 2);
         assert.equal((await request('POST', '/newsletter/confirm', { body: { token } })).status, 400, 'token is single-use');
         const repeat = await request('POST', '/api/newsletter/subscribe', { ip: ip + '0', body: { email: 'flood0@example.test' } });
         assert.deepEqual(JSON.parse(repeat.body), { ok: true, pending: true });
         assert.equal(mailTo('flood0@example.test').length, 1, 'existing address gets no new mail');
-        assert.equal((await request('POST', '/api/newsletter/unsubscribe', { body: { email: 'flood0@example.test' }, token: adminToken })).status, 200);
+        for (const email of ['flood0@example.test', 'flood1@example.test']) {
+          assert.equal((await request('POST', '/api/newsletter/unsubscribe', { body: { email }, token: adminToken })).status, 200);
+        }
         assert.equal(activeSubscribers(), 0);
       });
 
