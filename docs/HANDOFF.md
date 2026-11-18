@@ -39,8 +39,8 @@ node server.js
 
 ### Admin Access
 - Email: `admin@example.com`
-- Password: `Admin!2026`
-- **Change after first login** via admin tools page
+- Password: explicitly configured with `ADMIN_PASSWORD` before first boot; no default and never logged.
+- Existing accounts are not reset automatically; rotate any previously default or logged credentials before exposing an older installation.
 
 ---
 

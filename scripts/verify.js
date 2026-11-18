@@ -18,7 +18,7 @@ const ROOT = path.join(__dirname, '..');
 const PORT = 3300 + Math.floor(Math.random() * 400);
 const BASE = `http://127.0.0.1:${PORT}`;
 const DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), 'atlas-verify-'));
-const ADMIN = { email: 'admin@example.com', password: 'Admin!2026' };
+const ADMIN = { email: 'admin@example.com', password: 'Local-verification-only!2026' };
 const TRUST_MAP_PATH = path.join(ROOT, 'lib', 'trust-map.json');
 
 /**
@@ -110,7 +110,7 @@ let serverErr = '';
 async function main() {
   console.log(`Booting app on :${PORT} (data: ${DATA_DIR}) …`);
   server = spawn('node', ['server.js'], {
-    cwd: ROOT, env: { ...process.env, PORT: String(PORT), DATA_DIR, STORAGE: 'sqlite', BASE_URL: BASE },
+    cwd: ROOT, env: { ...process.env, PORT: String(PORT), DATA_DIR, STORAGE: 'sqlite', BASE_URL: BASE, ADMIN_EMAIL: ADMIN.email, ADMIN_PASSWORD: ADMIN.password },
     stdio: ['ignore', 'pipe', 'pipe'],
   });
   server.stderr.on('data', (d) => { serverErr += d.toString(); });

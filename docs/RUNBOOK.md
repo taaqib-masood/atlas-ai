@@ -51,7 +51,7 @@ server {
 }
 ```
 
-**First-boot checklist:** (1) confirm `/healthz` shows `storage: sqlite`; (2) log in as `admin@example.com` / printed password and **change it**; (3) set `ADMIN_EMAIL`/`ADMIN_PASSWORD` env vars on future installs to avoid the default admin; (4) verify `/sitemap.xml` resolves from the public domain.
+**First-boot checklist:** (1) set `ADMIN_EMAIL` and a private `ADMIN_PASSWORD` (8–128 characters) before starting; (2) confirm `/healthz` shows `storage: sqlite`; (3) log in with the configured credentials (they are never printed); (4) verify `/sitemap.xml` resolves from the public domain. No administrator is created without a valid password. Existing accounts are not reset; rotate previously default or logged credentials separately.
 
 ## 3. Function Compute (Aliyun FC 3.0, nodejs20) deployment
 
@@ -100,8 +100,8 @@ Procedure: (1) restore the last-good database backup (step 5); (2) checkout the 
 
 ## 8. Security hardening checklist
 
-- [ ] Change/remove the default admin password; set `ADMIN_EMAIL`/`ADMIN_PASSWORD` env vars.
-- [ ] Terminate TLS at the proxy; the app sets `SameSite=Lax` + `HttpOnly` cookies and security headers (`X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`) automatically. Add `Secure` on the cookie by terminating TLS and using `BASE_URL=https://…` — the app sets `Secure` only when the request arrives over HTTPS.
+- [ ] Configure `ADMIN_EMAIL`/`ADMIN_PASSWORD` before first boot; rotate previously default or logged credentials on existing installs.
+- [ ] Terminate TLS at the proxy and set `BASE_URL=https://…`; the app then marks cookies `Secure`, alongside session `HttpOnly`, `SameSite=Lax`, and security headers (`X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`). Forwarded headers are not trusted to decide cookie security.
 - [ ] Keep Node updated (security patches); the app has zero third-party dependencies, so there is no npm supply-chain surface.
 - [ ] Back up `data/` before any schema-affecting upgrade; `STORAGE=auto` prefers SQLite — don't switch formats without a backup.
 - [ ] Rate limits (login 10/15 min per IP+email, register 5/h per IP) are in-memory per instance — behind a proxy, ensure `X-Forwarded-For` is trusted only from your proxy.

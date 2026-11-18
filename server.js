@@ -38,7 +38,12 @@ handlers.configure({ baseUrl: process.env.BASE_URL || `http://localhost:${PORT}`
 try { require('./lib/seed').seedStore(store); } catch (e) { console.error('Seed warning:', e.message); }
 
 const server = http.createServer(async (req, res) => {
-  const u = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+  let u;
+  try { u = new URL(req.url, 'http://localhost'); } catch {
+    res.writeHead(400, { 'content-type': 'text/plain; charset=utf-8' });
+    res.end('Bad request');
+    return;
+  }
   const query = Object.fromEntries(u.searchParams);
   let bodyRaw = '';
   req.on('data', (chunk) => { if (bodyRaw.length < 1_000_000) bodyRaw += chunk; });
