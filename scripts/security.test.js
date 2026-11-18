@@ -9,7 +9,7 @@ const net = require('node:net');
 const { spawn } = require('node:child_process');
 const { openStore } = require('../lib/storage');
 const { seedStore } = require('../lib/seed');
-const { verifyPassword } = require('../lib/auth');
+const { verifyPassword, csrfForToken } = require('../lib/auth');
 const { handleRequest } = require('../lib/core');
 const extensions = require('../lib/extensions');
 
@@ -37,7 +37,7 @@ for (const storage of ['sqlite', 'json']) {
     const request = (method, pathname, { body, token, query, headers } = {}) => handleRequest(store, {
       method, path: pathname, query, ip: '127.0.0.1',
       headers: { 'content-type': 'application/json', accept: 'application/json',
-        ...(token ? { cookie: `sid=${token}` } : {}), ...headers },
+        cookie: token ? `sid=${token}` : 'csrf=anon-fixture', 'x-csrf-token': token ? csrfForToken(token) : 'anon-fixture', ...headers },
       bodyRaw: body ? JSON.stringify(body) : '',
     });
     try {
@@ -72,6 +72,17 @@ for (const storage of ['sqlite', 'json']) {
         }
         assert.equal((await request('POST', '/api/api-keys/delete', { token: aliceToken, body: { id: key.id } })).status, 200);
         assert.equal((await request('GET', '/api/v1/tools', { headers: { authorization: `Bearer ${key.key}` } })).status, 403);
+      });
+
+      await t.test('cookie sessions need a CSRF token regardless of Content-Type or Bearer header', async () => {
+        const forged = headers => request('POST', '/api/api-keys/create', { token: aliceToken, body: { name: 'Forged' }, headers: { 'x-csrf-token': '', ...headers } });
+        assert.equal((await forged({ 'content-type': 'text/plain; x=application/json' })).status, 403);
+        assert.equal((await forged({ authorization: 'Bearer x' })).status, 403);
+        assert.equal((await forged({})).status, 403);
+        const key = JSON.parse((await request('POST', '/api/api-keys/create', { token: aliceToken, body: { name: 'Real key' } })).body);
+        assert.equal((await forged({ authorization: `Bearer ${key.key}` })).status, 403);
+        const keyOnly = await request('POST', '/api/api-keys/create', { body: { name: 'Key only' }, headers: { cookie: '', 'x-csrf-token': '', authorization: `Bearer ${key.key}` } });
+        assert.equal(keyOnly.status, 401);
       });
 
       await t.test('email knowledge alone cannot remove newsletter subscriptions', async () => {

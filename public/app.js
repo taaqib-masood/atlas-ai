@@ -394,7 +394,7 @@
     const data = new URLSearchParams(new FormData(form));
     return fetch(form.action, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json' },
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json', 'X-CSRF-Token': window.__CSRF || '' },
       body: data.toString(),
       credentials: 'same-origin',
     })
@@ -576,7 +576,7 @@
       e.preventDefault();
       const data = new URLSearchParams(new FormData(form));
       fetch('/api/reviews/create', {
-        method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json' },
+        method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json', 'X-CSRF-Token': window.__CSRF || '' },
         body: data.toString(), credentials: 'same-origin',
       })
         .then(r => r.json())
@@ -598,7 +598,7 @@
         data.set('tool_id', voteBtn.dataset.toolId);
         data.set('_csrf', voteBtn.dataset.csrf || window.__CSRF || '');
         fetch('/api/votes/toggle', {
-          method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json' },
+          method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json', 'X-CSRF-Token': window.__CSRF || '' },
           body: data.toString(), credentials: 'same-origin',
         })
           .then(r => r.json())
@@ -619,7 +619,7 @@
         data.set('type', 'price_change');
         data.set('_csrf', alertBtn.dataset.csrf || window.__CSRF || '');
         fetch('/api/alerts/toggle', {
-          method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json' },
+          method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json', 'X-CSRF-Token': window.__CSRF || '' },
           body: data.toString(), credentials: 'same-origin',
         })
           .then(r => r.json())
