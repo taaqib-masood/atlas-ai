@@ -27,6 +27,7 @@ WorkingDirectory=/srv/atlas-ai
 Environment=PORT=3000
 Environment=DATA_DIR=/srv/atlas-ai/data
 Environment=BASE_URL=https://tools.example.com
+Environment=TRUST_PROXY=1
 ExecStart=/usr/bin/node server.js
 Restart=always
 RestartSec=3
@@ -50,6 +51,8 @@ server {
   location / { proxy_pass http://127.0.0.1:3000; proxy_set_header Host $host; proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; }
 }
 ```
+
+`TRUST_PROXY` is the number of reverse proxies in front of the app (`1` for the nginx block above). When set, the client IP used for rate limits is the entry that many hops from the right of `X-Forwarded-For`, i.e. the address your outermost trusted proxy saw; entries to its left are client-supplied and ignored. Unset, `0`, or a non-numeric value disables it. Leave it unset when the app is reachable directly, otherwise clients can spoof `X-Forwarded-For`. Without it, every request behind the proxy shares the proxy's IP (`127.0.0.1`) and one rate-limit bucket.
 
 **First-boot checklist:** (1) set `ADMIN_EMAIL` and a private `ADMIN_PASSWORD` (8–128 characters) before starting; (2) confirm `/healthz` shows `storage: sqlite`; (3) log in with the configured credentials (they are never printed); (4) verify `/sitemap.xml` resolves from the public domain. No administrator is created without a valid password. Existing accounts are not reset; rotate previously default or logged credentials separately.
 
@@ -104,7 +107,7 @@ Procedure: (1) restore the last-good database backup (step 5); (2) checkout the 
 - [ ] Terminate TLS at the proxy and set `BASE_URL=https://…`; the app then marks cookies `Secure`, alongside session `HttpOnly`, `SameSite=Lax`, and security headers (`X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`). Forwarded headers are not trusted to decide cookie security.
 - [ ] Keep Node updated (security patches); the app has zero third-party dependencies, so there is no npm supply-chain surface.
 - [ ] Back up `data/` before any schema-affecting upgrade; `STORAGE=auto` prefers SQLite — don't switch formats without a backup.
-- [ ] Rate limits (login 10/15 min per IP+email, register 5/h per IP) are in-memory per instance — behind a proxy, ensure `X-Forwarded-For` is trusted only from your proxy.
+- [ ] Rate limits are in-memory per instance: login blocks an IP after 10 failed attempts in 15 min; more than 10 failures for one account add a delay (up to 5 s) but never block the correct password, and a successful login resets that account's counter; register allows 5/h per IP. Behind a proxy, set `TRUST_PROXY` to your proxy count (see §2) and make sure the app port is reachable only from the proxy.
 
 ## 9. Troubleshooting
 
