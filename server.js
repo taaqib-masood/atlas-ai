@@ -18,6 +18,16 @@ const sb = require('./lib/stack-builder');
 const PORT = parseInt(process.env.PORT || '3000', 10);
 const HOST = process.env.HOST || '0.0.0.0';
 const store = openStore();
+// TRUST_PROXY = number of reverse proxies in front of the app (e.g. 1 for nginx); unset = use the socket address.
+const TRUST_PROXY = process.env.TRUST_PROXY ? (parseInt(process.env.TRUST_PROXY, 10) || 1) : 0;
+function clientIp(req) {
+  const remote = req.socket.remoteAddress || '';
+  const xff = req.headers['x-forwarded-for'];
+  if (!TRUST_PROXY || typeof xff !== 'string') return remote;
+  // Each trusted proxy appends the address it saw; entries further left are client-controlled.
+  const hops = xff.split(',').map((s) => s.trim()).filter(Boolean);
+  return hops[Math.max(hops.length - TRUST_PROXY, 0)] || remote;
+}
 
 // Run all migrations
 console.log('Running migrations...');
@@ -65,7 +75,7 @@ const server = http.createServer(async (req, res) => {
         query,
         headers: req.headers,
         bodyRaw,
-        ip: req.socket.remoteAddress || '',
+        ip: clientIp(req),
         rawBody: bodyRaw, // For CSV multipart parsing
       });
       res.writeHead(result.status, result.headers);

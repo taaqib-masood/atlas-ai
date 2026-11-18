@@ -110,7 +110,7 @@ let serverErr = '';
 async function main() {
   console.log(`Booting app on :${PORT} (data: ${DATA_DIR}) …`);
   server = spawn('node', ['server.js'], {
-    cwd: ROOT, env: { ...process.env, PORT: String(PORT), DATA_DIR, STORAGE: 'sqlite', BASE_URL: BASE, ADMIN_EMAIL: ADMIN.email, ADMIN_PASSWORD: ADMIN.password },
+    cwd: ROOT, env: { ...process.env, PORT: String(PORT), DATA_DIR, STORAGE: 'sqlite', BASE_URL: BASE, TRUST_PROXY: '1', ADMIN_EMAIL: ADMIN.email, ADMIN_PASSWORD: ADMIN.password },
     stdio: ['ignore', 'pipe', 'pipe'],
   });
   server.stderr.on('data', (d) => { serverErr += d.toString(); });
@@ -319,6 +319,21 @@ async function main() {
     if (res.text.includes('Too many attempts')) blocked = true;
   }
   check('F2. Login rate limit engages', blocked);
+
+  /* ---- lockout: failures for one account must not block its correct password ---- */
+  const lockFail = async (ip, password) => {
+    const j = new Jar();
+    await req('GET', '/login', { jar: j, headers: { 'x-forwarded-for': ip } });
+    return req('POST', '/login', { jar: j, headers: { 'x-forwarded-for': ip }, form: { _csrf: j.csrf(), email: user.email, password } });
+  };
+  for (let i = 0; i < 11; i++) await lockFail('203.0.113.' + (i % 2 + 10), 'wrongpass123');
+  r = await lockFail('203.0.113.20', user.password);
+  check('L1. Correct password still works after 11 failures for that account', r.status === 303, `status=${r.status}`);
+  for (let i = 0; i < 10; i++) await lockFail('198.51.100.' + i + ', 203.0.113.30', 'wrongpass123');
+  r = await lockFail('198.51.100.99, 203.0.113.30', 'wrongpass123');
+  check('L2. Per-IP limit keys on the last X-Forwarded-For hop, ignoring spoofed entries', r.text.includes('Too many attempts'));
+  r = await lockFail('203.0.113.21', 'wrongpass123');
+  check('L3. Other client IPs behind the proxy are not blocked', r.text.includes('Invalid email or password'));
 
   /* ---- recommendations validation ---- */
   r = await req('GET', '/tool/chatgpt');
