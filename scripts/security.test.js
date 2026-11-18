@@ -87,6 +87,13 @@ for (const storage of ['sqlite', 'json']) {
         assert.equal(count(), 0);
       });
 
+      await t.test('newsletter signup rejects oversized backtracking emails quickly', async () => {
+        const started = process.hrtime.bigint();
+        const result = await request('POST', '/api/newsletter/subscribe', { body: { email: 'a@' + '.'.repeat(200000) + '@' } });
+        assert.equal(result.status, 400);
+        assert.ok(Number(process.hrtime.bigint() - started) / 1e6 < 100);
+      });
+
       await t.test('JSON-LD cannot close its script element, while JSON values round-trip', async () => {
         for (const q of ['', 'normal search', '</script><b data-marker=fixture>', '</ScRiPt ><script data-marker=fixture>']) {
           const result = await request('GET', '/browse', { query: { q } });
