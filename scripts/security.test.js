@@ -195,3 +195,31 @@ test('malformed URL input cannot terminate the local HTTP server', async () => {
     fs.rmSync(dataDir, { recursive: true, force: true });
   }
 });
+
+test('embed widget keeps tool links inert and ignores host-page API origins', async () => {
+  const vm = require('node:vm');
+  const el = { dataset: { apiOrigin: 'https://mallory.example' }, classList: { remove() {} }, parentNode: { insertBefore() {} } };
+  const wrapper = { appendChild() {}, innerHTML: '' };
+  const fetched = [];
+  const tools = [
+    { name: 'a', url: 'javascript:alert(1)' },
+    { name: 'b', url: 'https://x.test/" onmouseover="alert(1)' },
+    { name: 'c', url: "https://ok.test/it's" },
+  ];
+  vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../public/widget.js'), 'utf8'), {
+    URL,
+    document: {
+      currentScript: { src: 'https://atlas.example/widget.js' },
+      getElementById: () => null, head: { appendChild() {} },
+      createElement: (tag) => (tag === 'div' ? wrapper : {}),
+      querySelectorAll: () => [el],
+    },
+    window: { location: { origin: 'https://host.example' }, matchMedia: () => ({ matches: false }) },
+    fetch: async (u) => { fetched.push(u); return { ok: true, json: async () => ({ tools }) }; },
+  });
+  await new Promise(r => setTimeout(r, 10));
+  assert.equal(new URL(fetched[0]).origin, 'https://atlas.example');
+  const hrefs = [...wrapper.innerHTML.matchAll(/<a href="([^"]*)"([^>]*)>/g)];
+  assert.deepEqual(hrefs.map(m => m[1]), ['#', 'https://x.test/%22%20onmouseover=%22alert(1)', 'https://ok.test/it&#39;s']);
+  assert.ok(hrefs.every(m => m[2] === ' target="_blank" rel="noopener"'));
+});

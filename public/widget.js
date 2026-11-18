@@ -14,7 +14,6 @@
  *   data-limit       — Max tools to show (default: 6, max: 12)
  *   data-theme       — "light" | "dark" (default: auto from prefers-color-scheme)
  *   data-show-ratings — "true" | "false" (default: true)
- *   data-api-origin   — Custom API origin (default: current domain)
  *   data-header-text  — Custom heading text
  *   data-empty-text   — Custom empty state text
  */
@@ -22,6 +21,10 @@
   'use strict';
 
   const CONTAINER_CLASS = 'atlas-widget';
+  // API calls go only to the origin that served this script; host-page markup cannot redirect them.
+  const API_ORIGIN = document.currentScript && document.currentScript.src
+    ? new URL(document.currentScript.src).origin
+    : window.location.origin;
 
   // -- Styles (self-contained) --
   const STYLES = `
@@ -65,7 +68,7 @@
       : '';
     const pricingClass = (tool.pricing_model || '').toLowerCase().includes('free') ? 'aw-pill-free' : 'aw-pill-paid';
     return `<div class="atlas-widget-card">
-      <h4><a href="${esc(tool.url)}" target="_blank" rel="noopener">${esc(tool.name)}</a></h4>
+      <h4><a href="${esc(safeUrl(tool.url))}" target="_blank" rel="noopener">${esc(tool.name)}</a></h4>
       <p class="aw-tagline">${esc(tool.tagline || tool.description || '')}</p>
       <div class="aw-meta">
         <span class="atlas-widget-pill aw-pill-category">${esc(tool.category || '')}</span>
@@ -76,14 +79,20 @@
   }
 
   function esc(s) {
-    if (!s) return '';
-    const d = document.createElement('div');
-    d.textContent = String(s);
-    return d.innerHTML;
+    return String(s ?? '')
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  function safeUrl(s) {
+    try {
+      const u = new URL(String(s));
+      return u.protocol === 'http:' || u.protocol === 'https:' ? u.href : '#';
+    } catch { return '#'; }
   }
 
   async function fetchTools(config) {
-    const url = new URL('/api/v1/tools', config.apiOrigin || window.location.origin);
+    const url = new URL('/api/v1/tools', API_ORIGIN);
     if (config.category) url.searchParams.set('category', config.category);
     if (config.tag) url.searchParams.set('tag', config.tag);
     url.searchParams.set('limit', String(config.limit || 6));
@@ -134,7 +143,6 @@
       limit: Math.min(parseInt(el.dataset.limit, 10) || 6, 12),
       theme: el.dataset.theme || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'),
       showRatings: el.dataset.showRatings || 'true',
-      apiOrigin: el.dataset.apiOrigin || '',
       headerText: el.dataset.headerText || '',
       emptyText: el.dataset.emptyText || '',
     };
