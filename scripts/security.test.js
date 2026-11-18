@@ -12,6 +12,7 @@ const { seedStore } = require('../lib/seed');
 const { verifyPassword } = require('../lib/auth');
 const { handleRequest } = require('../lib/core');
 const extensions = require('../lib/extensions');
+const { getOutbox } = require('../lib/critical-pending');
 
 delete process.env.ADMIN_EMAIL;
 delete process.env.ADMIN_PASSWORD;
@@ -34,8 +35,8 @@ for (const storage of ['sqlite', 'json']) {
     const store = openStore({ storage, dataDir });
     extensions.migrate(store);
     require('../lib/stack-builder').migrate(store);
-    const request = (method, pathname, { body, token, query, headers } = {}) => handleRequest(store, {
-      method, path: pathname, query, ip: '127.0.0.1',
+    const request = (method, pathname, { body, token, query, headers, ip = '127.0.0.1' } = {}) => handleRequest(store, {
+      method, path: pathname, query, ip,
       headers: { 'content-type': 'application/json', accept: 'application/json',
         ...(token ? { cookie: `sid=${token}` } : {}), ...headers },
       bodyRaw: body ? JSON.stringify(body) : '',
@@ -74,14 +75,57 @@ for (const storage of ['sqlite', 'json']) {
         assert.equal((await request('GET', '/api/v1/tools', { headers: { authorization: `Bearer ${key.key}` } })).status, 403);
       });
 
+      const activeSubscribers = () => storage === 'sqlite'
+        ? store.get('SELECT COUNT(*) AS n FROM subscribers WHERE active = 1').n
+        : store.data.subscribers.filter(s => s.active).length;
+
+      await t.test('newsletter signups are rate limited and stay inactive until confirmed', async () => {
+        const ip = storage === 'sqlite' ? '198.51.100.1' : '198.51.100.2';
+        const sent = getOutbox().length;
+        const mailTo = (to) => getOutbox().slice(sent).filter(m => m.to === to);
+        const statuses = [];
+        for (let i = 0; i < 20; i++) {
+          statuses.push((await request('POST', '/api/newsletter/subscribe', { ip, body: { email: `flood${i}@example.test` } })).status);
+        }
+        assert.deepEqual(statuses, [...Array(5).fill(200), ...Array(15).fill(429)]);
+        assert.equal(activeSubscribers(), 0);
+        const mail = mailTo('flood0@example.test').at(-1);
+        const token = mail.html.match(/token=([0-9a-f]{64})/)[1];
+        assert.equal((await request('GET', '/newsletter/confirm', { query: { token } })).status, 200);
+        assert.equal(activeSubscribers(), 0, 'GET (link prefetch) must not confirm');
+        const formToken = mailTo('flood1@example.test').at(-1).html.match(/token=([0-9a-f]{64})/)[1];
+        const formPage = await request('GET', '/newsletter/confirm', { query: { token: formToken }, headers: { 'content-type': '' } });
+        const csrfCookie = formPage.headers['set-cookie'][0].match(/^csrf=([^;]+)/)[1];
+        const fields = Object.fromEntries([...formPage.body.matchAll(/<input type="hidden" name="(\w+)" value="([^"]*)"/g)].map(m => [m[1], m[2]]));
+        assert.deepEqual(fields, { _csrf: csrfCookie, token: formToken });
+        const submitForm = (cookie) => handleRequest(store, { method: 'POST', path: '/newsletter/confirm', ip: '127.0.0.1',
+          headers: { 'content-type': 'application/x-www-form-urlencoded', cookie }, bodyRaw: new URLSearchParams(fields).toString() });
+        assert.equal((await submitForm('')).status, 403, 'form post needs the csrf cookie');
+        assert.equal(activeSubscribers(), 0);
+        assert.equal((await submitForm(`csrf=${csrfCookie}`)).status, 200);
+        assert.equal(activeSubscribers(), 1);
+        assert.equal((await request('POST', '/newsletter/confirm', { body: { token: 'f'.repeat(64) } })).status, 400);
+        assert.equal((await request('POST', '/newsletter/confirm', { body: {} })).status, 400);
+        assert.equal((await request('POST', '/newsletter/confirm', { body: { token } })).status, 200);
+        assert.equal(activeSubscribers(), 2);
+        assert.equal((await request('POST', '/newsletter/confirm', { body: { token } })).status, 400, 'token is single-use');
+        const repeat = await request('POST', '/api/newsletter/subscribe', { ip: ip + '0', body: { email: 'flood0@example.test' } });
+        assert.deepEqual(JSON.parse(repeat.body), { ok: true, pending: true });
+        assert.equal(mailTo('flood0@example.test').length, 1, 'existing address gets no new mail');
+        for (const email of ['flood0@example.test', 'flood1@example.test']) {
+          assert.equal((await request('POST', '/api/newsletter/unsubscribe', { body: { email }, token: adminToken })).status, 200);
+        }
+        assert.equal(activeSubscribers(), 0);
+      });
+
       await t.test('email knowledge alone cannot remove newsletter subscriptions', async () => {
         const body = { email: 'subscriber@example.test' };
         await request('POST', '/api/newsletter/subscribe', { body });
+        const token = getOutbox().filter(m => m.to === body.email).at(-1).html.match(/token=([0-9a-f]{64})/)[1];
+        await request('POST', '/newsletter/confirm', { body: { token } });
         assert.equal((await request('POST', '/api/newsletter/unsubscribe', { body })).status, 401);
         assert.equal((await request('POST', '/api/newsletter/unsubscribe', { body, token: bobToken })).status, 403);
-        const count = () => storage === 'sqlite'
-          ? store.get('SELECT COUNT(*) AS n FROM subscribers WHERE active = 1').n
-          : store.data.subscribers.filter(s => s.active).length;
+        const count = activeSubscribers;
         assert.equal(count(), 1);
         assert.equal((await request('POST', '/api/newsletter/unsubscribe', { body, token: adminToken })).status, 200);
         assert.equal(count(), 0);
