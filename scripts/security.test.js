@@ -147,6 +147,26 @@ for (const storage of ['sqlite', 'json']) {
         assert.ok(editor.body.includes('Unpublished revised fixture'));
       });
 
+      await t.test('referral clicks store capped UTM values and a bounded number of events per IP', async () => {
+        require('../lib/report-features').migrateAnalytics(store);
+        require('../lib/critical-pending').migrateReferralRedirect(store);
+        const tool = store.listTools({ limit: 1 })[0];
+        const ip = `198.51.100.${storage === 'json' ? 2 : 1}`;
+        const clicks = () => store.kind() === 'sqlite'
+          ? store.all('SELECT * FROM referral_events WHERE ip = ?', [ip])
+          : (store.data.referral_events || []).filter(e => e.ip === ip);
+        const query = { utm_campaign: 'a'.repeat(10240) + '<script>', utm_source: '"><x>' };
+        for (let i = 0; i < 100; i++) {
+          const result = await handleRequest(store, { method: 'GET', path: `/ref/${tool.slug}`, query, ip, headers: {}, bodyRaw: '' });
+          assert.equal(result.status, 303);
+          assert.ok(new URL(result.headers.location).searchParams.get('utm_campaign').length <= 100);
+        }
+        const events = clicks();
+        assert.ok(events.length > 0 && events.length <= 5, `stored ${events.length}`);
+        assert.equal(events[0].utm_campaign, 'a'.repeat(100));
+        assert.equal(events[0].utm_source, 'x');
+      });
+
       await t.test('HTTPS configuration marks session cookies Secure without trusting forwarding headers', async () => {
         const prior = process.env.BASE_URL;
         try {
