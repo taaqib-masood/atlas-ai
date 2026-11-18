@@ -30,7 +30,9 @@ Then open <http://localhost:3000>.
 
 | Role | Email | Password |
 |---|---|---|
-| Admin | `admin@example.com` | `Admin!2026` — **change after first login** (set `ADMIN_EMAIL`/`ADMIN_PASSWORD` env vars to override) |
+| Admin | `admin@example.com` (or `ADMIN_EMAIL`) | Set `ADMIN_PASSWORD` (8–128 characters) before first boot; no default password and no credential logging. |
+
+Without a valid `ADMIN_PASSWORD`, the public catalog is seeded but no administrator is created. Existing accounts are not reset: operators of older installs must rotate any previously default or logged credentials separately.
 
 ## Configuration (environment variables)
 
@@ -41,7 +43,7 @@ Then open <http://localhost:3000>.
 | `DATA_DIR` | `./data` | Where `app.db` (or `app.json`) lives |
 | `STORAGE` | `auto` | `auto` \| `sqlite` \| `json` — auto prefers SQLite when `node:sqlite` exists |
 | `BASE_URL` | `http://localhost:3000` | Used for canonical URLs and sitemap |
-| `ADMIN_EMAIL` / `ADMIN_PASSWORD` | seeded defaults | First-run admin credentials |
+| `ADMIN_EMAIL` / `ADMIN_PASSWORD` | `admin@example.com` / unset | Explicit first-run admin credentials; never printed |
 
 ## Project structure
 
@@ -68,6 +70,7 @@ data/                Runtime database (created on first boot, git-ignored)
 ## How the pieces work
 
 - **Auth:** scrypt password hashes with per-user salt; session tokens stored hashed (sha256) in the DB, delivered as `HttpOnly; SameSite=Lax` cookies; CSRF via double-submit token (derived from the session token); login rate-limited per IP and per email; registration rate-limited per IP.
+- **Newsletter:** email delivery remains an outbox-only prototype. Subscription removal requires an administrator; email-only anonymous removal is disabled until verified unsubscribe links exist.
 - **Recommendations (explainable):** related tools on detail pages score same-category (+5), shared tags (+3 each), normalized popularity (+2), recency (+1); the dashboard and home use the same engine seeded by your saved/viewed tools; every suggestion shows its reasons ("Same category as X", "Shares tags: …", "Popular right now").
 - **Admin workflow:** create → draft → publish → public; unpublish, archive, verify, delete; every change writes a `tool_history` row with actor, field, old/new values, and timestamp (see `/admin/history`).
 - **SEO:** per-page titles/descriptions, canonical URLs, JSON-LD (`WebSite`, `CollectionPage`, `SoftwareApplication`), `sitemap.xml`, `robots.txt`, semantic HTML, readable URLs.
