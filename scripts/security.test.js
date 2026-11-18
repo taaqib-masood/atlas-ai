@@ -147,6 +147,17 @@ for (const storage of ['sqlite', 'json']) {
         assert.ok(editor.body.includes('Unpublished revised fixture'));
       });
 
+      await t.test('post-action redirects stay on this site', async () => {
+        const tool = store.listTools({ limit: 1 })[0];
+        const location = async next => (await request('POST', '/api/favorites/toggle', { token: aliceToken,
+          headers: { accept: 'text/html' }, body: { tool_id: tool.id, next } })).headers.location;
+        for (const next of ['/%09/evil.example', '/%0a/evil.example', '/%0d/evil.example', '//evil.example',
+          '/\\evil.example', '/.//evil.example', 'https://evil.example', 'http://atlas.invalid//evil.example']) {
+          assert.equal(await location(decodeURIComponent(next)), '/dashboard', next);
+        }
+        assert.equal(await location(`/tool/${tool.slug}?tab=reviews#top`), `/tool/${tool.slug}?tab=reviews#top`);
+      });
+
       await t.test('HTTPS configuration marks session cookies Secure without trusting forwarding headers', async () => {
         const prior = process.env.BASE_URL;
         try {
